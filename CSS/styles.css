@@ -1,0 +1,221 @@
+:root {
+  --rojo: #FF0000;
+  --amarillo: #FFD500;
+  --azul: #007BFF;
+  --fondo: #0A0A0B;
+  --blanco: #FFFFFF;
+  --texto-oscuro: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--fondo);
+  color: white;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  align-items: center;
+  background-color: #1a1a1a75;
+}
+
+.nav-links {
+  display: flex;
+  margin: 1rem;
+  gap: 2rem;
+}
+
+.nav-links li{
+  list-style-type: none;
+  font-size: 2rem;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.nav-links a:hover {
+  color: var(--azul);
+}
+
+#particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.hero {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  margin: 3rem;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero img {
+  width: 10rem;
+  border-radius: 100%;
+}
+
+/* Estilo de Secciones con Transparencia 92% */
+.section {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.92);
+  /* Transparencia solicitada */
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  color: var(--texto-oscuro);
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--azul);
+  font-weight: bold;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.text-blue {
+  color: var(--azul);
+}
+
+/* Estadísticas fijas sobre el fondo oscuro */
+.stats-container {
+  display: flex;
+  justify-content: space-around;
+  max-width: 1000px;
+  margin: -50px auto 20px;
+  padding: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item strong {
+  display: block;
+  font-size: 2rem;
+  color: var(--azul);
+}
+
+.stat-item span {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Tarjetas */
+.cards {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.card,
+.testimonial-card {
+  background: white;
+  padding: 2rem;
+  flex: 1 1 300px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.icon-blue {
+  font-size: 2.5rem;
+  color: var(--azul);
+  margin-bottom: 1rem;
+}
+
+/* Side by Side (Imagen y Texto) */
+.side-by-side {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  text-align: left;
+}
+
+.text-block {
+  flex: 1;
+}
+
+.image-block {
+  flex: 1;
+  height: 350px;
+  background: #ddd;
+  border-radius: 20px;
+}
+
+/* Lista de checks */
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+
+.check-list li {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.check-list i {
+  color: var(--azul);
+}
+
+/* Botones */
+.hero-btns {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.cta {
+  background: var(--azul);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cta-outline {
+  border: 2px solid var(--azul);
+  color: var(--azul);
+  padding: 13px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Footer Final */
+.footer-cta {
+  background: var(--azul);
+  padding: 6rem 2rem;
+  text-align: center;
+  color: white;
+}
+
+.footer-cta .cta {
+  background: white;
+  color: var(--azul);
+}
+
+.footer-cta .cta-outline {
+  border-color: white;
+  color: white;
+}
