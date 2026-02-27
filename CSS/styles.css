@@ -1,17 +1,30 @@
 :root {
   --rojo: #FF0000;
   --amarillo: #FFD500;
-  --azul: #007BFF;
+  --plateado: #C0C0C0;
   --fondo: #0A0A0B;
   --blanco: #FFFFFF;
   --texto-oscuro: #1a1a1a;
+}
+
+/* Esto activa el scroll suave en toda la página */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: var(--fondo);
-  color: white;
+  color: rgb(255, 255, 255);
+
+}
+
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar {
@@ -19,7 +32,8 @@ body {
   justify-content: space-between;
   padding: 1rem;
   align-items: center;
-  background-color: #1a1a1a75;
+  background-color: #000000;
+  border-bottom: solid #d23030;
 }
 
 .nav-links {
@@ -28,18 +42,40 @@ body {
   gap: 2rem;
 }
 
-.nav-links li{
+.nav-links li {
   list-style-type: none;
   font-size: 2rem;
 }
 
 .nav-links li a {
   text-decoration: none;
-  color: #ffffff;
+  color: #fff9f9;
 }
 
 .nav-links a:hover {
-  color: var(--azul);
+  color: var(--amarillo);
+}
+
+.navbar .logo-text a img {
+  width: 3rem;
+}
+
+.icon-whatsapp {
+  color: #25D366;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto para Instagram (Degradado característico) */
+.icon-instagram {
+  color: #E4405F;
+  /* Color base */
+  transition: transform 0.3s ease;
+}
+
+/* Efecto de aumento al pasar el mouse para que resalten */
+.nav-links li a:hover .icon-whatsapp,
+.nav-links li a:hover .icon-instagram {
+  transform: scale(1.2);
 }
 
 #particles-js {
@@ -63,7 +99,7 @@ body {
 }
 
 .hero img {
-  width: 25rem;
+  width: 40rem;
   height: auto;
   border-radius: 100%;
 }
@@ -73,23 +109,32 @@ body {
   max-width: 1200px;
   margin: 4rem auto;
   padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.92);
-  /* Transparencia solicitada */
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   border-radius: 24px;
-  color: var(--texto-oscuro);
+  color: var(--blanco);
   text-align: center;
 }
 
+.section h2 {
+  color: #ffffff;
+}
+
 .subtitle {
-  color: var(--azul);
+  color: var(--amarillo);
   font-weight: bold;
   font-size: 0.9rem;
   letter-spacing: 1px;
 }
 
+.subtitle-about {
+  color: var(--amarillo);
+  font-weight: bold;
+  font-size: 3rem;
+}
+
 .text-blue {
-  color: var(--azul);
+  color: var(--amarillo);
 }
 
 /* Estadísticas fijas sobre el fondo oscuro */
@@ -103,41 +148,29 @@ body {
 
 .stat-item {
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: scale(1.05);
 }
 
 .stat-item strong {
   display: block;
   font-size: 2rem;
-  color: var(--azul);
+  color: var(--blanco);
+  transition: color 0.3s ease;
 }
 
 .stat-item span {
   font-size: 0.8rem;
   color: #888;
+  transition: color 0.3s ease;
 }
 
-/* Tarjetas */
-.cards {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-}
-
-.card,
-.testimonial-card {
-  background: white;
-  padding: 2rem;
-  flex: 1 1 300px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  text-align: left;
-}
-
-.icon-blue {
-  font-size: 2.5rem;
-  color: var(--azul);
-  margin-bottom: 1rem;
+.stat-item:hover strong,
+.stat-item:hover span {
+  color: var(--amarillo);
 }
 
 /* Side by Side (Imagen y Texto) */
@@ -146,6 +179,31 @@ body {
   align-items: center;
   gap: 3rem;
   text-align: left;
+  color: #ffffff;
+}
+
+.side-by-side-about {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 1rem;
+  color: #f9f6f6;
+}
+
+.side-by-side-about .aboutText p {
+  line-height: 1.8;
+}
+
+hr {
+  background: #FF0000;
+  height: 0.15rem;
+  color: red;
+  opacity: 10;
+  margin-left: auto;
+  margin-right: auto;
+  width: 70%;
 }
 
 .text-block {
@@ -157,6 +215,17 @@ body {
   height: 350px;
   background: #ddd;
   border-radius: 20px;
+  overflow: hidden;
+}
+
+.image-block img {
+  flex: 1;
+  width: 100%;
+
+}
+
+.side-by-side-about .imgLogo img {
+  width: 20rem;
 }
 
 /* Lista de checks */
@@ -174,7 +243,7 @@ body {
 }
 
 .check-list i {
-  color: var(--azul);
+  color: var(--amarillo);
 }
 
 /* Botones */
@@ -186,26 +255,37 @@ body {
 }
 
 .cta {
-  background: var(--azul);
+  background: var(--rojo);
   color: white;
   padding: 15px 30px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.cta:hover {
+  background: #cc0000;
 }
 
 .cta-outline {
-  border: 2px solid var(--azul);
-  color: var(--azul);
+  border: 2px solid var(--plateado);
+  color: var(--plateado);
   padding: 13px 30px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.cta-outline:hover {
+  background: var(--plateado);
+  color: var(--fondo);
 }
 
 /* Footer Final */
 .footer-cta {
-  background: var(--azul);
+  background: var(--rojo);
   padding: 6rem 2rem;
   text-align: center;
   color: white;
@@ -213,10 +293,251 @@ body {
 
 .footer-cta .cta {
   background: white;
-  color: var(--azul);
+  color: var(--rojo);
+}
+
+.footer-cta .cta:hover {
+  background: var(--plateado);
+  color: var(--texto-oscuro);
 }
 
 .footer-cta .cta-outline {
   border-color: white;
   color: white;
+}
+
+.footer-cta .cta-outline:hover {
+  background: white;
+  color: var(--rojo);
+}
+
+/* =========================================
+   NUEVOS ESTILOS: GALERÍA EXPANDIBLE
+   ========================================= */
+
+.expanding-gallery {
+  display: flex;
+  width: 100%;
+  height: 450px;
+  gap: 15px;
+  margin-top: 2rem;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.expanding-card {
+  position: relative;
+  flex: 1;
+  /* Todos inician con el mismo tamaño */
+  border-radius: 20px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transition: flex 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* Efecto elástico suave */
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Al pasar el mouse, la tarjeta crece */
+.expanding-card:hover {
+  flex: 5;
+}
+
+/* Capa oscura para legibilidad del texto */
+.expanding-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.1));
+  z-index: 1;
+}
+
+/* Contenido (Icono y Texto) */
+.card-content {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 2;
+  color: white;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Iconos circulares (ahora rojos) */
+.icon-wrapper {
+  background: var(--rojo);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 10px rgba(255, 0, 0, 0.4);
+}
+
+.text-wrapper h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.text-wrapper p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0;
+  /* Oculto por defecto */
+  max-height: 0;
+  transition: all 0.5s ease;
+  overflow: hidden;
+}
+
+/* Mostrar descripción solo al hacer hover */
+.expanding-card:hover .text-wrapper p {
+  opacity: 1;
+  max-height: 100px;
+  margin-top: 10px;
+}
+
+/* --- RESPONSIVE (MÓVIL) --- */
+@media (max-width: 768px) {
+  .expanding-gallery {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .expanding-card {
+    height: 250px;
+    flex: none;
+    /* Desactivar flex elástico en móvil */
+    width: 100%;
+  }
+
+  .text-wrapper p {
+    opacity: 1;
+    /* Mostrar texto siempre en móvil */
+    max-height: 100px;
+    margin-top: 10px;
+  }
+
+}
+
+/* =========================================
+   NUEVOS ESTILOS: FORMULARIO DE CONTACTO
+   ========================================= */
+.contact-section {
+  background: rgba(255, 255, 255, 0.05);
+  /* Fondo sutil para el contenedor */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5rem 2rem;
+}
+
+.contact-header h2 {
+  color: var(--blanco) !important;
+  /* Forzamos blanco para que no se pierda */
+  margin-bottom: 3rem;
+}
+
+.contact-form {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Cuadrícula para los 4 campos superiores */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Dos columnas */
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* CORRECCIÓN DE LETRAS: Ahora son blancas */
+.form-group label {
+  font-size: 0.9rem;
+  color: var(--blanco);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+
+.form-group input,
+.form-group textarea {
+  background: rgba(255, 255, 255, 0.07);
+  /* Fondo oscuro pero visible */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 15px;
+  border-radius: 12px;
+  color: var(--blanco);
+  /* Texto que escribe el usuario en blanco */
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Efecto al hacer clic en el campo */
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--rojo);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+/* El área de mensaje ocupa todo el ancho */
+.full-width {
+  width: 100%;
+}
+
+.btn-submit {
+  align-self: center;
+  /* Centra el botón */
+  padding: 18px 60px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  transition: 0.3s;
+}
+
+.btn-submit:hover {
+  background-color: #cc0000;
+  transform: scale(1.05);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    /* En celular, una sola columna */
+  }
+
+  .contact-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .btn-submit {
+    width: 100%;
+    /* Botón ancho completo en móvil */
+  }
+}
 }
