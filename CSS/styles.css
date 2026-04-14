@@ -7,9 +7,11 @@
   --texto-oscuro: #1a1a1a;
 }
 
-/* Esto activa el scroll suave en toda la página */
+/* Esto activa el scroll suave en toda la página y compensa el header sticky */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 130px;
+  overflow-x: hidden;
 }
 
 body {
@@ -17,7 +19,8 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--fondo);
   color: rgb(255, 255, 255);
-
+  overflow-x: hidden;
+  width: 100%;
 }
 
 
@@ -44,7 +47,7 @@ header {
 
 .nav-links li {
   list-style-type: none;
-  font-size: 2rem;
+  font-size: 1.2rem;
 }
 
 .nav-links li a {
@@ -57,7 +60,17 @@ header {
 }
 
 .navbar .logo-text a img {
-  width: 3rem;
+  width: 3.5rem;
+  transition: width 0.3s ease;
+}
+
+/* Botón Hamburguesa (Oculto por defecto) */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  font-size: 1.8rem;
+  color: white;
 }
 
 .icon-whatsapp {
@@ -133,8 +146,19 @@ header {
   font-size: 3rem;
 }
 
-.text-blue {
-  color: var(--amarillo);
+.text-gradient {
+  background: linear-gradient(90deg, var(--amarillo), #FF8C00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  text-shadow: 0 0 20px rgba(255, 213, 0, 0.3);
+}
+
+::selection {
+  background: var(--rojo);
+  color: var(--blanco);
 }
 
 /* Estadísticas fijas sobre el fondo oscuro */
@@ -338,6 +362,7 @@ hr {
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  text-decoration: none; /* Asegura que no haya subrayado por el enlace */
 }
 
 /* Al pasar el mouse, la tarjeta crece */
@@ -413,6 +438,101 @@ hr {
 
 /* --- RESPONSIVE (MÓVIL) --- */
 @media (max-width: 768px) {
+  /* Navbar Móvil */
+  .navbar {
+    padding: 0.8rem 1.5rem;
+  }
+
+  .navbar .logo-text a img {
+    width: 2.5rem;
+  }
+
+  .menu-toggle {
+    display: block; /* Aparece en móvil */
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    transform: translateX(100%); /* Ahora se esconde sin estirar la pantalla */
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    height: calc(100vh - 70px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    transition: transform 0.4s ease; /* Animación más suave */
+    margin: 0;
+    z-index: 1000;
+  }
+
+  .nav-links.active {
+    transform: translateX(0); /* Se desliza hacia adentro */
+  }
+
+  .nav-links li {
+    font-size: 1.5rem;
+  }
+
+  /* Hero Móvil (EL CAMBIO IMPORTANTE) */
+  .hero {
+    margin: 1.5rem;
+  }
+
+  .hero img {
+    width: 80% !important;
+    max-width: 280px; /* Tamaño ideal iPhone */
+    height: auto;
+    border-radius: 20px; /* Menos redondeado para que no parezca un círculo perfecto si no lo es */
+  }
+
+  .hero h1 {
+    font-size: 1.8rem !important;
+    text-align: center;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .stats-container {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0;
+  }
+
+  .stat-item {
+    width: 45%;
+  }
+
+  .side-by-side {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .check-list li {
+    text-align: left;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px;
+    border-radius: 15px;
+  }
+
+  .image-block {
+    width: 100%;
+    height: 250px;
+    order: 2; /* Manda la imagen debajo del texto */
+  }
+
+  .text-block {
+    order: 1;
+  }
+
   .expanding-gallery {
     flex-direction: column;
     height: auto;
@@ -421,17 +541,14 @@ hr {
   .expanding-card {
     height: 250px;
     flex: none;
-    /* Desactivar flex elástico en móvil */
     width: 100%;
   }
 
   .text-wrapper p {
     opacity: 1;
-    /* Mostrar texto siempre en móvil */
     max-height: 100px;
     margin-top: 10px;
   }
-
 }
 
 /* =========================================
@@ -540,4 +657,105 @@ hr {
     /* Botón ancho completo en móvil */
   }
 }
+
+/* =========================================
+   SOPORTE TÉCNICO VISTA (SPA)
+   ========================================= */
+.support-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 2rem 1rem;
+}
+
+.box-soporte {
+  width: 100%;
+  max-width: 600px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+
+.box-soporte h2 {
+  color: var(--amarillo);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.user-status {
+  text-align: center;
+  color: var(--plateado);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+/* Estilos anteriores de .text-blue eliminados para evitar conflictos */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.full-width { grid-column: span 2; }
+
+/* Slider de Urgencia Personalizado */
+.urgency-slider-container { margin: 1rem 0; width: 100%; }
+.urgency-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  border-radius: 4px;
+}
+.urgency-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--amarillo);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.urgency-slider.level-2::-webkit-slider-thumb { background: #ff8c00; }
+.urgency-slider.level-3::-webkit-slider-thumb { background: var(--rojo); }
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-weight: bold;
+  color: var(--plateado);
+  font-size: 0.85rem;
+}
+.slider-labels span { transition: color 0.3s; }
+.slider-labels .active { color: white; }
+
+/* Input Archivos Customizado */
+.file-upload-container {
+  border: 2px dashed rgba(255,255,255,0.3);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 5px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  background: rgba(0,0,0,0.2);
+}
+.file-upload-container:hover { border-color: var(--amarillo); }
+.file-upload-container i { font-size: 1.8rem; color: var(--plateado); margin-bottom: 8px; }
+.file-upload-container input[type="file"] { display: none; }
+
+/* Ajustes Responsive para Soporte */
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: span 1; }
+  .box-soporte { padding: 20px; }
 }

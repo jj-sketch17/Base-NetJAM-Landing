@@ -6,7 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NetJam - Soluciones Tecnológicas</title>
   <link rel="stylesheet" href="CSS/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="ASSETS/Logo NetJAM.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -20,12 +24,16 @@
           <img src="./ASSETS/icono superior derecha.jpg" alt="">
         </a>
       </div>
+      <!-- Botón de menú hamburguesa para móviles -->
+      <div class="menu-toggle" id="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </div>
       <ul class="nav-links">
         <li><a href="#servicios">Servicios</a></li>
         <li><a href="#about-section">Nosotros</a></li>
         <li><a href="#contact-section">Contacto</a></li>
-        <li><a href="#">Soporte</a></li>
-        <li><a href="https://wa.me/584142969482" target="_blank"><i class="fab fa-whatsapp icon-whatsapp"></i></a></li>
+        <li><a href="Pages/soporte.html">Soporte</a></li>
+        <li><a href="https://wa.me/584142969482?text=%C2%A1Hola!%20Bienvenido%20a%20nuestro%20servicio%20de%20soporte%20t%C3%A9cnico.%20Nos%20especializamos%20en%20redes%20y%20servidores.%20Si%20tienes%20alguna%20pregunta%20o%20problema,%20no%20dudes%20en%20escribirnos.%20Estamos%20aqu%C3%AD%20para%20ayudarte%2024/7.%20%C2%A1Gracias%20por%20elegirnos!" target="_blank"><i class="fab fa-whatsapp icon-whatsapp"></i></a></li>
         <li><a href="https://instagram.com/net.jam_ca" target="_blank"><i
               class="fab fa-instagram icon-instagram"></i></a></li>
       </ul>
@@ -36,7 +44,7 @@
     <section class="hero">
       <div class="hero-content">
         <img src="ASSETS/Logo NetJAM.JPG" alt="NetJam Logo" class="hero-logo">
-        <h1>Impulsamos el Crecimiento con <span class="text-blue">Tecnología</span></h1>
+        <h1>Impulsamos el Crecimiento con <span class="text-gradient">Tecnología</span></h1>
         <p>Soluciones ágiles para negocios en crecimiento.</p>
         <div class="hero-btns">
           <a href="#servicios" class="cta-outline">Ver Servicios</a>
@@ -58,19 +66,19 @@
 
       <div class="expanding-gallery">
 
-        <div class="expanding-card" style="background-image: url('ASSETS/Instalacion\ de\ Redes.jpg');">
+        <a href="Pages/redes.html" class="expanding-card" style="background-image: url('ASSETS/Instalacion\ de\ Redes.jpg');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-network-wired"></i>
             </div>
             <div class="text-wrapper">
-              <h3>Instalación de Redes</h3>
+              <h3>Infraestructura de Redes</h3>
               <p>Conectividad de alto rendimiento y cableado estructurado para oficinas modernas.</p>
             </div>
           </div>
-        </div>
+        </a>
 
-        <div class="expanding-card" style="background-image: url('ASSETS/Gestion\ de\ servidores.jpg');">
+        <a href="Pages/servidores.html" class="expanding-card" style="background-image: url('ASSETS/Gestion\ de\ servidores.jpg');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-server"></i>
@@ -80,9 +88,9 @@
               <p>Seguridad, mantenimiento y disponibilidad total para sus datos locales o en la nube.</p>
             </div>
           </div>
-        </div>
+        </a>
 
-        <div class="expanding-card" style="background-image: url('ASSETS/Soporte\ Tecnico.jpg');">
+        <a href="Pages/services.html" class="expanding-card" style="background-image: url('ASSETS/Soporte\ Tecnico.jpg');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-headset"></i>
@@ -92,7 +100,7 @@
               <p>Asistencia remota y presencial inmediata para resolver incidentes críticos.</p>
             </div>
           </div>
-        </div>
+        </a>
 
       </div>
     </section>
@@ -154,7 +162,11 @@
         <h2>Queremos saber en qué podemos ayudarte</h2>
       </div>
       
-      <form class="contact-form">
+      <form action="https://formsubmit.co/soporte@netjam.net.ve" method="POST" class="contact-form">
+        <!-- Campo oculto para el asunto del correo -->
+        <input type="hidden" name="_subject" value="Nuevo mensaje de contacto desde la Web - NetJAM">
+        <!-- Evita que el usuario tenga que resolver captchas (opcional, pero mejora la experiencia) -->
+        <input type="hidden" name="_captcha" value="false">
         <div class="form-grid">
           <div class="form-group">
             <label>Nombre Completo</label>
@@ -196,6 +208,33 @@
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="./js/particles.js"></script>
+
+  <script>
+    // Lógica para el menú hamburguesa
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      // Cambiar el icono de barras a una 'X' al abrir
+      const icon = mobileMenu.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    // Cerrar el menú automáticamente al hacer clic en un enlace
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        mobileMenu.querySelector('i').classList.replace('fa-times', 'fa-bars');
+      });
+    });
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soporte Técnico - NetJAM</title>
+  <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="../ASSETS/Logo NetJAM.ico" type="image/x-icon">
+  <style>
+    /* === CHAT STYLES === */
+    .support-container { position: relative; z-index: 1; }
+
+    #my-tickets-box { display: none; opacity: 0; transition: opacity 0.4s; }
+    #my-tickets-box.visible { display: block; opacity: 1; }
+
+    .ticket-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: border-color 0.2s;
+    }
+    .ticket-card:hover { border-color: rgba(246,255,0,0.3); }
+    .ticket-card-header {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px; flex-wrap: wrap; gap: 8px;
+    }
+    .ticket-card-header h4 { font-size: 1rem; font-weight: 700; color: #fff; }
+    .ticket-status-badge {
+      padding: 3px 12px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    }
+    .status-open    { background: rgba(52,152,219,0.2);  color: #3498db; }
+    .status-pending { background: rgba(243,156,18,0.2);  color: #f39c12; }
+    .status-resolved{ background: rgba(46,204,113,0.2);  color: #2ecc71; }
+    .status-closed  { background: rgba(136,136,170,0.2); color: #8888aa; }
+
+    .ticket-desc { font-size: 0.85rem; opacity: 0.65; margin-bottom: 14px; }
+
+    /* === CHAT BUBBLE AREA === */
+    .chat-area {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 14px;
+    }
+    .chat-area h5 { font-size: 0.8rem; color: #8888aa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .chat-messages-user {
+      display: flex; flex-direction: column; gap: 10px;
+      max-height: 260px; overflow-y: auto;
+      padding: 4px 0 10px;
+      scroll-behavior: smooth;
+    }
+    .chat-messages-user::-webkit-scrollbar { width: 3px; }
+    .chat-messages-user::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+    .chat-bubble-u {
+      max-width: 82%; padding: 9px 14px;
+      border-radius: 13px; font-size: 0.87rem; line-height: 1.5;
+    }
+    .bubble-from-user {
+      align-self: flex-end;
+      background: rgba(246,255,0,0.1);
+      border: 1px solid rgba(246,255,0,0.2);
+      border-bottom-right-radius: 3px;
+    }
+    .bubble-from-admin {
+      align-self: flex-start;
+      background: rgba(224,27,36,0.15);
+      border: 1px solid rgba(224,27,36,0.25);
+      border-bottom-left-radius: 3px;
+    }
+    .bubble-from-admin strong { color: #e01b24; }
+    .bubble-meta-u { font-size: 0.68rem; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+    .no-messages { text-align: center; color: rgba(255,255,255,0.3); font-size: 0.82rem; padding: 12px 0; }
+
+    .chat-send-row { display: flex; gap: 10px; margin-top: 12px; }
+    .chat-send-row input {
+      flex: 1; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; padding: 10px 14px;
+      color: #fff; font-size: 0.87rem;
+    }
+    .chat-send-row input:focus { outline: none; border-color: var(--amarillo, #f6ff00); }
+    .btn-send-chat {
+      background: #e01b24; color: #fff; border: none;
+      padding: 10px 20px; border-radius: 10px; cursor: pointer;
+      font-weight: 600; font-size: 0.87rem; transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-send-chat:hover { background: #a31017; }
+
+    .btn-new-ticket {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(246,255,0,0.1); border: 1px solid rgba(246,255,0,0.3);
+      color: #f6ff00; padding: 10px 22px; border-radius: 10px;
+      cursor: pointer; font-weight: 600; font-size: 0.9rem; margin-bottom: 24px;
+      transition: background 0.2s;
+    }
+    .btn-new-ticket:hover { background: rgba(246,255,0,0.2); }
+  </style>
+</head>
+
+<body>
+
+  <div id="particles-js"></div>
+
+  <header>
+    <nav class="navbar">
+      <div class="logo-text">
+        <a href="../Index.html">
+          <img src="../ASSETS/icono superior derecha.jpg" alt="Logo NetJAM">
+        </a>
+      </div>
+      <div class="menu-toggle" id="mobile-menu">
+        <i class="fas fa-bars"></i>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../Index.html#servicios">Servicios</a></li>
+        <li><a href="../Index.html#about-section">Nosotros</a></li>
+        <li><a href="../Index.html#contact-section">Contacto</a></li>
+        <li><a href="#">Soporte</a></li>
+        <li><a href="https://wa.me/584142969482" target="_blank"><i class="fab fa-whatsapp icon-whatsapp"></i></a></li>
+        <li><a href="https://instagram.com/net.jam_ca" target="_blank"><i class="fab fa-instagram icon-instagram"></i></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="support-container">
+
+    <!-- MÓDULO 1: LOGIN -->
+    <div id="login-box" class="box-soporte">
+      <h2>Acceso a Soporte NetJAM</h2>
+      <form id="login-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Empresa</label>
+            <input type="text" id="login-empresa" placeholder="Ej. ACME CA" required>
+          </div>
+          <div class="form-group">
+            <label>Departamento</label>
+            <input type="text" id="login-depto" placeholder="Ej. Administración" required>
+          </div>
+          <div class="form-group">
+            <label>Usuario</label>
+            <input type="text" id="login-user" placeholder="Tu usuario" required>
+          </div>
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" id="login-pass" placeholder="****" required>
+          </div>
+        </div>
+        <br>
+        <button type="submit" class="cta btn-submit full-width">INGRESAR</button>
+      </form>
+      <div style="text-align:center; margin-top: 18px;">
+        <a href="admin.html" style="color: rgba(255,255,255,0.35); font-size: 0.78rem; text-decoration: none; transition: color 0.2s;"
+           onmouseover="this.style.color='rgba(224,27,36,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+          🔒 Acceso Administradores
+        </a>
+      </div>
+    </div>
+
+    <!-- MÓDULO 2: CREAR TICKET -->
+    <div id="ticket-box" class="box-soporte" style="display: none; opacity: 0;">
+      <div class="user-status">
+        <i class="fas fa-user-circle"></i> Autenticado como <span class="text-blue" id="display-user"></span> | Empresa: <span class="text-blue" id="display-empresa"></span>
+        &nbsp;·&nbsp;
+        <button onclick="showMyTickets()" style="background:none;border:none;color:var(--amarillo,#f6ff00);cursor:pointer;font-weight:600;font-size:0.85rem;">📋 Ver mis tickets</button>
+      </div>
+      <hr style="margin: 1rem auto;">
+
+      <h2>Creación de Ticket de Servicio</h2>
+      <form id="ticket-form">
+        <div class="form-group full-width" style="margin-bottom: 2rem;">
+          <label>¿Qué problema presentas? (Título de la falla)</label>
+          <input type="text" id="ticket-titulo" placeholder="Breve resumen del problema. Ej: Falla en servidor de contabilidad" required>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Urgencia del Incidente</label>
+          <div class="urgency-slider-container">
+            <input type="range" id="urgency-slider" min="1" max="3" value="1" class="urgency-slider">
+            <div class="slider-labels" id="urgency-labels">
+              <span class="active" data-val="1">Bajo</span>
+              <span data-val="2">Medio</span>
+              <span data-val="3">Urgente</span>
+            </div>
+          </div>
+          <p class="subtitle" id="urgency-description" style="text-align:center; font-size: 0.8rem;">El equipo puede operar con normalidad aunque falla un componente.</p>
+        </div>
+
+        <div class="form-group full-width" style="margin-top: 1.5rem;">
+          <label>Descripción detallada</label>
+          <textarea id="ticket-desc" rows="4" placeholder="Explica detalladamente lo que ocurrió y desde cuándo ocurre..." required></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Evidencia (Opcional)</label>
+          <div class="file-upload-container" id="file-drop-area">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Arrastra tu captura de pantalla aquí<br>o <strong>haz clic para buscar</strong></p>
+            <input type="file" id="ticket-file" accept="image/png, image/jpeg, image/jpg, .pdf">
+          </div>
+          <p id="file-name-display" style="text-align: center; font-size: 0.85rem; color: var(--amarillo); margin-top: 5px;"></p>
+        </div>
+
+        <button type="submit" class="cta btn-submit full-width" style="margin-top: 2rem;"><i class="fas fa-paper-plane"></i> ENVIAR TICKET</button>
+      </form>
+    </div>
+
+    <!-- MÓDULO 3: MIS TICKETS (con chat) -->
+    <div id="my-tickets-box" class="box-soporte">
+      <div class="user-status">
+        <i class="fas fa-user-circle"></i> <span id="mt-display-user"></span> | <span id="mt-display-empresa"></span>
+      </div>
+      <hr style="margin: 1rem auto;">
+      <h2 style="margin-bottom: 1.5rem;">📋 Mis Tickets</h2>
+
+      <button class="btn-new-ticket" onclick="showNewTicket()">
+        <i class="fas fa-plus"></i> Crear nuevo ticket
+      </button>
+
+      <div id="tickets-list-container">
+        <p style="color:rgba(255,255,255,0.4);text-align:center;">Cargando tickets...</p>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="../js/particles.js"></script>
+
+  <script>
+    const API_URL = 'http://192.168.18.16:3000/api';
+    let USER_TOKEN = null;
+    let USER_DATA = null;
+    let myTicketsPollingIntervals = {};
+
+    // === NAVEGACIÓN MENÚ ===
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+    mobileMenu.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      const icon = mobileMenu.querySelector('i');
+      if (navLinks.classList.contains('active')) {
+        icon.classList.replace('fa-bars', 'fa-times');
+      } else {
+        icon.classList.replace('fa-times', 'fa-bars');
+      }
+    });
+
+    // === LOGIN ===
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('login-user').value;
+      const password = document.getElementById('login-pass').value;
+      const company  = document.getElementById('login-empresa').value;
+
+      try {
+        const response = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          USER_TOKEN = data.accessToken;
+          USER_DATA  = data;
+          localStorage.setItem('netjam_token', USER_TOKEN);
+          localStorage.setItem('netjam_user', JSON.stringify(data));
+
+          document.getElementById('display-user').innerText = data.username;
+          document.getElementById('display-empresa').innerText = company;
+
+          // Transición al formulario de ticket
+          const loginBox  = document.getElementById('login-box');
+          const ticketBox = document.getElementById('ticket-box');
+          loginBox.style.opacity = '0';
+          setTimeout(() => {
+            loginBox.style.display = 'none';
+            ticketBox.style.display = 'block';
+            setTimeout(() => { ticketBox.style.opacity = '1'; }, 50);
+          }, 400);
+        } else {
+          alert('Error: ' + data.message);
+        }
+      } catch (error) {
+        alert('No se pudo conectar con el servidor de soporte.');
+      }
+    });
+
+    // === MOSTRAR MIS TICKETS ===
+    function showMyTickets() {
+      const ticketBox   = document.getElementById('ticket-box');
+      const myTicketsBox = document.getElementById('my-tickets-box');
+
+      document.getElementById('mt-display-user').innerText    = USER_DATA.username;
+      document.getElementById('mt-display-empresa').innerText = USER_DATA.company;
+
+      ticketBox.style.opacity = '0';
+      setTimeout(() => {
+        ticketBox.style.display = 'none';
+        myTicketsBox.style.display = 'block';
+        setTimeout(() => { myTicketsBox.classList.add('visible'); }, 50);
+        loadMyTickets();
+      }, 300);
+    }
+
+    // === MOSTRAR FORMULARIO NUEVO TICKET ===
+    function showNewTicket() {
+      const myTicketsBox = document.getElementById('my-tickets-box');
+      const ticketBox    = document.getElementById('ticket-box');
+
+      // Limpiar pollings activos
+      Object.values(myTicketsPollingIntervals).forEach(clearInterval);
+      myTicketsPollingIntervals = {};
+
+      myTicketsBox.classList.remove('visible');
+      setTimeout(() => {
+        myTicketsBox.style.display = 'none';
+        ticketBox.style.display = 'block';
+        setTimeout(() => { ticketBox.style.opacity = '1'; }, 50);
+      }, 300);
+    }
+
+    // === CARGAR MIS TICKETS ===
+    async function loadMyTickets() {
+      try {
+        const res = await fetch(`${API_URL}/my-tickets`, {
+          headers: { 'Authorization': 'Bearer ' + USER_TOKEN }
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.message || 'Error ' + res.status);
+        }
+        const tickets = await res.json();
+        renderMyTickets(tickets);
+      } catch(e) {
+        console.error('loadMyTickets error:', e);
+        document.getElementById('tickets-list-container').innerHTML =
+          `<p style="color:#e74c3c;text-align:center;">❌ Error: ${e.message || 'No se pudo conectar con el servidor.'}<br><small style="color:rgba(255,255,255,0.4);">Intenta cerrar sesión y volver a ingresar.</small></p>`;
+      }
+    }
+
+    function renderMyTickets(tickets) {
+      const container = document.getElementById('tickets-list-container');
+      if (!tickets.length) {
+        container.innerHTML = '<p style="color:rgba(255,255,255,0.4);text-align:center;padding:20px;">No tienes tickets abiertos. ¡Crea uno!</p>';
+        return;
+      }
+
+      const statusMap  = { open:'Abierto', pending:'Pendiente', resolved:'Resuelto', closed:'Cerrado' };
+      const urgencyMap = { 1:'🟢 Baja', 2:'🟡 Media', 3:'🔴 Alta' };
+
+      container.innerHTML = tickets.map(t => `
+        <div class="ticket-card">
+          <div class="ticket-card-header">
+            <h4>#${t.id} — ${t.title}</h4>
+            <span class="ticket-status-badge status-${t.status}">${statusMap[t.status] || t.status}</span>
+          </div>
+          <p class="ticket-desc">${(t.description || '').substring(0, 150)}${t.description && t.description.length > 150 ? '…' : ''}</p>
+          <p style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:12px;">
+            ${urgencyMap[t.urgency] || ''} &nbsp;·&nbsp; ${new Date(t.created_at).toLocaleDateString('es-VE', {day:'2-digit',month:'short',year:'numeric'})}
+          </p>
+          <div class="chat-area">
+            <h5>💬 Conversación</h5>
+            <div class="chat-messages-user" id="chat-area-${t.id}">
+              <div class="no-messages">Cargando...</div>
+            </div>
+            <div class="chat-send-row">
+              <input type="text" id="chat-input-${t.id}" placeholder="Escribe un comentario adicional..." onkeydown="if(event.key==='Enter') sendUserMessage(${t.id})">
+              <button class="btn-send-chat" onclick="sendUserMessage(${t.id})">Enviar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Iniciar polling por cada ticket
+      tickets.forEach(t => {
+        loadTicketMessages(t.id);
+        if (!myTicketsPollingIntervals[t.id]) {
+          myTicketsPollingIntervals[t.id] = setInterval(() => loadTicketMessages(t.id), 5000);
+        }
+      });
+    }
+
+    // === CARGAR MENSAJES DE UN TICKET ===
+    async function loadTicketMessages(ticketId) {
+      try {
+        const res = await fetch(`${API_URL}/tickets/${ticketId}/messages`, {
+          headers: { 'Authorization': 'Bearer ' + USER_TOKEN }
+        });
+        if (!res.ok) return;
+        const messages = await res.json();
+        renderTicketMessages(ticketId, messages);
+      } catch(e) { /* silencioso */ }
+    }
+
+    function renderTicketMessages(ticketId, messages) {
+      const area = document.getElementById('chat-area-' + ticketId);
+      if (!area) return;
+      if (!messages.length) {
+        area.innerHTML = '<div class="no-messages">Sin mensajes aún. Cuando el técnico responda aparecerá aquí.</div>';
+        return;
+      }
+      const wasAtBottom = area.scrollHeight - area.scrollTop <= area.clientHeight + 40;
+      area.innerHTML = messages.map(m => {
+        const isAdmin = m.sender_role === 'admin';
+        const time = new Date(m.created_at).toLocaleTimeString('es-VE', { hour:'2-digit', minute:'2-digit' });
+        const date = new Date(m.created_at).toLocaleDateString('es-VE', { day:'2-digit', month:'short' });
+        return `<div class="chat-bubble-u ${isAdmin ? 'bubble-from-admin' : 'bubble-from-user'}">
+          ${isAdmin ? '🛠️ <strong>NetJAM</strong>' : '👤 <strong>' + m.sender_name + '</strong>'}: ${m.message}
+          <div class="bubble-meta-u">${date} ${time}</div>
+        </div>`;
+      }).join('');
+      if (wasAtBottom) area.scrollTop = area.scrollHeight;
+    }
+
+    // === ENVIAR MENSAJE COMO USUARIO ===
+    async function sendUserMessage(ticketId) {
+      const input = document.getElementById('chat-input-' + ticketId);
+      const message = input.value.trim();
+      if (!message) return;
+      try {
+        const res = await fetch(`${API_URL}/tickets/${ticketId}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + USER_TOKEN },
+          body: JSON.stringify({ message })
+        });
+        if (res.ok) {
+          input.value = '';
+          loadTicketMessages(ticketId);
+        } else {
+          const d = await res.json();
+          alert(d.message || 'Error al enviar.');
+        }
+      } catch(e) { alert('Error de conexión.'); }
+    }
+
+    // === ENVÍO DE TICKET ===
+    document.getElementById('ticket-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('title',       document.getElementById('ticket-titulo').value);
+      formData.append('urgency',     document.getElementById('urgency-slider').value);
+      formData.append('description', document.getElementById('ticket-desc').value);
+      const fileInput = document.getElementById('ticket-file');
+      if (fileInput.files.length > 0) formData.append('evidence', fileInput.files[0]);
+
+      try {
+        const response = await fetch(`${API_URL}/tickets`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${USER_TOKEN}` },
+          body: formData
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert('¡Ticket enviado con éxito! Nuestro equipo revisará tu caso pronto.\n\nPuedes ver el estado y las respuestas en "📋 Ver mis tickets".');
+          document.getElementById('ticket-form').reset();
+          document.getElementById('file-name-display').innerText = '';
+        } else {
+          alert('Error al enviar ticket: ' + (data.message || 'Error desconocido'));
+        }
+      } catch (error) {
+        alert('Error de conexión al enviar el ticket.');
+      }
+    });
+
+    // === CARGA DE ARCHIVOS ===
+    const fileInput  = document.getElementById('ticket-file');
+    const dropArea   = document.getElementById('file-drop-area');
+    const fileNameDisplay = document.getElementById('file-name-display');
+    dropArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files.length > 0) {
+        fileNameDisplay.innerHTML = '<i class="fas fa-file-image"></i> Archivo seleccionado: ' + this.files[0].name;
+        dropArea.style.borderColor = 'var(--amarillo)';
+      } else {
+        fileNameDisplay.innerHTML = '';
+        dropArea.style.borderColor = 'rgba(255,255,255,0.3)';
+      }
+    });
+
+    // === URGENCIA SLIDER ===
+    const urgencySlider = document.getElementById('urgency-slider');
+    const urgencyLabels = document.querySelectorAll('#urgency-labels span');
+    const urgencyDesc   = document.getElementById('urgency-description');
+    const helpTexts = [
+      "El equipo puede operar con normalidad aunque falla un componente particular o necesitas asesoría.",
+      "Existe un problema general. Tareas importantes están afectadas pero hay un flujo de trabajo alternativo.",
+      "El sistema está inoperativo. Un servicio crítico para la empresa se ha detenido por completo (Afectación total)."
+    ];
+    function updateSliderColor() {
+      const val = parseInt(urgencySlider.value);
+      urgencySlider.classList.remove('level-1', 'level-2', 'level-3');
+      urgencySlider.classList.add('level-' + val);
+      urgencyLabels.forEach((span, index) => {
+        index + 1 === val ? span.classList.add('active') : span.classList.remove('active');
+      });
+      urgencyDesc.innerText = helpTexts[val - 1];
+    }
+    urgencySlider.addEventListener('input', updateSliderColor);
+    updateSliderColor();
+  </script>
+</body>
+
+</html>

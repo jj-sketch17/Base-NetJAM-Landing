@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetJAM — Panel de Administración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #e01b24;
+      --red-dark: #a31017;
+      --gold: #f5c518;
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --text: #f0f0f5;
+      --muted: #8888aa;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --info: #3498db;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ---- PARTICLES BG ---- */
+    #particles-js { position: fixed; inset: 0; z-index: 0; }
+
+    /* ---- LOGIN ---- */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(10,10,15,0.95);
+      transition: opacity 0.4s;
+    }
+    .login-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+    .login-card .logo { text-align: center; margin-bottom: 8px; }
+    .login-card .logo img { height: 54px; }
+    .login-card h2 { text-align: center; font-size: 1.1rem; color: var(--muted); font-weight: 400; margin-bottom: 32px; }
+
+    /* ---- LAYOUT ---- */
+    #app { display: none; position: relative; z-index: 1; min-height: 100vh; }
+
+    header {
+      background: rgba(10,10,15,0.85);
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      padding: 0 32px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-brand { display: flex; align-items: center; gap: 12px; }
+    .header-brand img { height: 32px; }
+    .header-brand span { font-size: 0.85rem; color: var(--muted); }
+    .header-user { display: flex; align-items: center; gap: 16px; }
+    .badge-admin { background: var(--red); color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; }
+    .btn-logout { background: none; border: 1px solid var(--glass-border); color: var(--muted); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .btn-logout:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+    /* ---- SIDEBAR + MAIN ---- */
+    .layout { display: flex; min-height: calc(100vh - 60px); }
+    nav.sidebar {
+      width: 220px; flex-shrink: 0;
+      background: rgba(255,255,255,0.02);
+      border-right: 1px solid var(--glass-border);
+      padding: 24px 12px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      cursor: pointer; color: var(--muted);
+      font-size: 0.9rem; transition: all 0.15s;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item .icon { font-size: 1.1rem; }
+    .nav-item:hover { background: var(--glass); color: var(--text); }
+    .nav-item.active { background: rgba(224,27,36,0.15); color: var(--red); border: 1px solid rgba(224,27,36,0.2); }
+
+    main { flex: 1; padding: 32px; overflow-x: auto; }
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ---- CARDS ---- */
+    .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 14px; padding: 20px; text-align: center;
+    }
+    .stat-card .stat-num { font-size: 2rem; font-weight: 800; }
+    .stat-card .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+    .stat-card.red .stat-num { color: var(--red); }
+    .stat-card.gold .stat-num { color: var(--gold); }
+    .stat-card.green .stat-num { color: var(--success); }
+    .stat-card.blue .stat-num { color: var(--info); }
+
+    /* ---- TABLE ---- */
+    .table-card {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 16px; overflow: hidden;
+    }
+    .table-toolbar {
+      padding: 16px 20px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 1px solid var(--glass-border);
+      gap: 12px; flex-wrap: wrap;
+    }
+    .table-toolbar h3 { font-size: 1rem; font-weight: 600; }
+    .toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 12px 16px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); text-align: left; background: rgba(255,255,255,0.02); }
+    td { padding: 12px 16px; font-size: 0.88rem; border-top: 1px solid var(--glass-border); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ---- STATUS BADGES ---- */
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+    }
+    .status-open { background: rgba(52,152,219,0.2); color: var(--info); }
+    .status-pending { background: rgba(243,156,18,0.2); color: var(--warning); }
+    .status-resolved { background: rgba(46,204,113,0.2); color: var(--success); }
+    .status-closed { background: rgba(136,136,170,0.2); color: var(--muted); }
+    .urgency-1 { color: var(--success); }
+    .urgency-2 { color: var(--warning); }
+    .urgency-3 { color: var(--danger); font-weight: 600; }
+    .role-admin { background: rgba(224,27,36,0.15); color: var(--red); padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+    .role-user { background: rgba(255,255,255,0.06); color: var(--muted); padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; }
+
+    /* ---- ACTION BUTTONS ---- */
+    .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red-dark); }
+    .btn-sm { padding: 5px 10px; font-size: 0.78rem; border-radius: 6px; }
+    .btn-ghost { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--glass-border); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+    .btn-danger { background: rgba(231,76,60,0.15); color: var(--danger); border: 1px solid rgba(231,76,60,0.2); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+
+    /* ---- FORM ---- */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+      border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: inherit;
+      font-size: 0.9rem; transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--red); }
+    select option { background: #1a1a2e; }
+
+    /* ---- MODAL ---- */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #14141f; border: 1px solid var(--glass-border);
+      border-radius: 18px; padding: 32px; width: 100%; max-width: 480px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px); transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+    .modal-footer { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ---- FILTER BAR ---- */
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .filter-bar select { width: auto; }
+
+    /* ---- EMPTY STATE ---- */
+    .empty-state { text-align: center; padding: 48px; color: var(--muted); }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+
+    /* ---- TOAST ---- */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      background: #1e1e2e; border: 1px solid var(--glass-border);
+      border-radius: 12px; padding: 14px 20px; font-size: 0.88rem;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      transform: translateY(80px); opacity: 0; transition: all 0.3s;
+      max-width: 320px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { border-color: var(--success); }
+    #toast.error { border-color: var(--danger); }
+
+    @media (max-width: 768px) {
+      nav.sidebar { width: 60px; }
+      .nav-item span { display: none; }
+      main { padding: 16px; }
+    }
+
+    /* ---- CHAT MODAL ---- */
+    .modal-chat { max-width: 600px; }
+    .chat-header { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--glass-border); }
+    .chat-header h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .chat-header small { color: var(--muted); font-size: 0.8rem; }
+    .chat-messages {
+      height: 340px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 4px 0 12px; margin-bottom: 16px;
+      scroll-behavior: smooth;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    .chat-bubble {
+      max-width: 78%; padding: 10px 14px;
+      border-radius: 14px; font-size: 0.88rem; line-height: 1.5;
+      position: relative;
+    }
+    .chat-bubble .bubble-meta { font-size: 0.7rem; color: rgba(255,255,255,0.45); margin-top: 5px; }
+    .bubble-user {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--glass-border);
+      border-bottom-left-radius: 4px;
+    }
+    .bubble-admin {
+      align-self: flex-end;
+      background: rgba(224,27,36,0.2);
+      border: 1px solid rgba(224,27,36,0.3);
+      border-bottom-right-radius: 4px;
+    }
+    .chat-empty { text-align: center; color: var(--muted); font-size: 0.85rem; margin: auto; }
+    .chat-input-row { display: flex; gap: 10px; }
+    .chat-input-row textarea {
+      resize: none; height: 56px; flex: 1;
+      padding: 10px 14px; font-size: 0.875rem;
+    }
+    .chat-input-row textarea:focus { border-color: var(--red); }
+  </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo">
+      <img src="../ASSETS/NetJam Logo.png" alt="NetJAM" onerror="this.style.display='none'" />
+    </div>
+    <h2>Panel de Administración</h2>
+    <form id="login-form">
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" id="admin-user" placeholder="admin" required />
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="admin-pass" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px;padding:12px;">Ingresar</button>
+      <p id="login-error" style="color:var(--danger);margin-top:12px;text-align:center;font-size:0.85rem;display:none;"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+  <header>
+    <div class="header-brand">
+      <img src="../ASSETS/NetJam Logo.png" alt="NetJAM" onerror="this.style.display='none'" />
+      <span>Panel Admin</span>
+    </div>
+    <div class="header-user">
+      <span class="badge-admin">Admin</span>
+      <span id="hdr-username" style="font-size:0.85rem;color:var(--muted);">—</span>
+      <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+    </div>
+  </header>
+  <div class="layout">
+    <nav class="sidebar">
+      <button class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard', this)">
+        <span class="icon">📊</span><span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-tab="entities" onclick="switchTab('entities', this)">
+        <span class="icon">🏢</span><span>Entidades</span>
+      </button>
+      <button class="nav-item" data-tab="users" onclick="switchTab('users', this)">
+        <span class="icon">👥</span><span>Usuarios</span>
+      </button>
+      <button class="nav-item" data-tab="tickets" onclick="switchTab('tickets', this)">
+        <span class="icon">🎫</span><span>Tickets</span>
+      </button>
+    </nav>
+
+    <main>
+
+      <!-- DASHBOARD -->
+      <div id="tab-dashboard" class="section active">
+        <div class="page-title">📊 Dashboard</div>
+        <div class="stats-grid">
+          <div class="stat-card blue"><div class="stat-num" id="stat-entities">—</div><div class="stat-label">Entidades</div></div>
+          <div class="stat-card gold"><div class="stat-num" id="stat-users">—</div><div class="stat-label">Usuarios</div></div>
+          <div class="stat-card red"><div class="stat-num" id="stat-open">—</div><div class="stat-label">Tickets Abiertos</div></div>
+          <div class="stat-card green"><div class="stat-num" id="stat-resolved">—</div><div class="stat-label">Tickets Resueltos</div></div>
+        </div>
+        <div class="table-card">
+          <div class="table-toolbar"><h3>🔴 Últimos Tickets Urgentes</h3></div>
+          <table>
+            <thead><tr><th>ID</th><th>Título</th><th>Usuario</th><th>Entidad</th><th>Estado</th></tr></thead>
+            <tbody id="dash-tickets-body"><tr><td colspan="5" class="empty-state">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ENTIDADES -->
+      <div id="tab-entities" class="section">
+        <div class="page-title">🏢 Entidades</div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <h3>Lista de Entidades</h3>
+            <button class="btn btn-primary btn-sm" onclick="openEntityModal()">+ Nueva Entidad</button>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Usuarios</th><th>Creada</th><th>Acciones</th></tr></thead>
+            <tbody id="entities-body"><tr><td colspan="6"><div class="empty-state"><div class="icon">⏳</div>Cargando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="tab-users" class="section">
+        <div class="page-title">👥 Usuarios</div>
+        <div class="table-card">
+          <div class="table-toolbar">
+            <h3>Lista de Usuarios</h3>
+            <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Nuevo Usuario</button>
+          </div>
+          <table>
+            <thead><tr><th>Usuario</th><th>Empresa</th><th>Dpto.</th><th>Entidad</th><th>Rol</th><th>Acciones</th></tr></thead>
+            <tbody id="users-body"><tr><td colspan="6"><div class="empty-state"><div class="icon">⏳</div>Cargando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TICKETS -->
+      <div id="tab-tickets" class="section">
+        <div class="page-title">🎫 Tickets de Soporte</div>
+        <div class="filter-bar">
+          <select id="filter-entity" onchange="loadTickets()"><option value="">Todas las entidades</option></select>
+          <select id="filter-status" onchange="loadTickets()">
+            <option value="">Todos los estados</option>
+            <option value="open">Abierto</option>
+            <option value="pending">Pendiente</option>
+            <option value="resolved">Resuelto</option>
+            <option value="closed">Cerrado</option>
+          </select>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead><tr><th>ID</th><th>Título</th><th>Usuario</th><th>Entidad</th><th>Urgencia</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="tickets-body"><tr><td colspan="8"><div class="empty-state"><div class="icon">⏳</div>Cargando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ===== MODAL: ENTIDAD ===== -->
+<div class="modal-overlay" id="modal-entity">
+  <div class="modal">
+    <div class="modal-title" id="entity-modal-title">Nueva Entidad</div>
+    <input type="hidden" id="entity-edit-id" />
+    <div class="form-group"><label>Nombre *</label><input type="text" id="entity-name" placeholder="Ej: IT, Contabilidad, RRHH" /></div>
+    <div class="form-group"><label>Descripción</label><textarea id="entity-desc" rows="3" placeholder="Descripción opcional..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-entity')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEntity()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: USUARIO ===== -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-title" id="user-modal-title">Nuevo Usuario</div>
+    <input type="hidden" id="user-edit-id" />
+    <div class="form-group"><label>Usuario *</label><input type="text" id="user-username" placeholder="netjam_user" /></div>
+    <div class="form-group"><label>Contraseña *</label><input type="password" id="user-password" placeholder="(dejar vacío para no cambiar)" /></div>
+    <div class="form-group"><label>Empresa *</label><input type="text" id="user-company" placeholder="Nombre de la empresa" /></div>
+    <div class="form-group"><label>Departamento</label><input type="text" id="user-dept" placeholder="IT, Contabilidad..." /></div>
+    <div class="form-group"><label>Entidad</label><select id="user-entity"><option value="">Sin entidad</option></select></div>
+    <div class="form-group"><label>Rol</label>
+      <select id="user-role">
+        <option value="user">Usuario</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-user')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveUser()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: TICKET CHAT ===== -->
+<div class="modal-overlay" id="modal-ticket-chat">
+  <div class="modal modal-chat">
+    <div class="chat-header">
+      <h3 id="chat-ticket-title">Ticket #—</h3>
+      <small id="chat-ticket-meta"></small>
+    </div>
+    <div class="chat-messages" id="chat-messages-area">
+      <div class="chat-empty">⏳ Cargando mensajes...</div>
+    </div>
+    <div class="chat-input-row">
+      <textarea id="chat-admin-input" placeholder="Escribe tu respuesta al cliente..."></textarea>
+      <button class="btn btn-primary" onclick="sendAdminMessage()" style="align-self:flex-end;height:56px;white-space:nowrap;">Enviar 📨</button>
+    </div>
+    <div class="modal-footer" style="margin-top:12px;">
+      <button class="btn btn-ghost" onclick="closeChat()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+const API_URL = 'http://192.168.18.16:3000/api';
+let TOKEN = null;
+
+// ===== PARTICLES =====
+particlesJS('particles-js', {
+  particles: { number: { value: 60 }, color: { value: '#e01b24' }, shape: { type: 'circle' },
+    opacity: { value: 0.25, random: true }, size: { value: 2, random: true },
+    line_linked: { enable: true, distance: 130, color: '#e01b24', opacity: 0.1, width: 1 },
+    move: { enable: true, speed: 1 } },
+  interactivity: { events: { onhover: { enable: true, mode: 'repulse' } } }
+});
+
+// ===== UTILS =====
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  setTimeout(() => el.className = '', 3000);
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function fmtDate(d) { return new Date(d).toLocaleDateString('es-VE', { day:'2-digit', month:'short', year:'numeric' }); }
+async function api(path, opts = {}) {
+  const res = await fetch(API_URL + path, {
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + TOKEN, ...opts.headers },
+    ...opts
+  });
+  return res;
+}
+
+// ===== LOGIN =====
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('admin-user').value;
+  const password = document.getElementById('admin-pass').value;
+  try {
+    const res = await fetch(`${API_URL}/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok || data.role !== 'admin') {
+      const errEl = document.getElementById('login-error');
+      errEl.textContent = data.role !== 'admin' ? 'Este usuario no tiene permisos de administrador.' : data.message;
+      errEl.style.display = 'block';
+      return;
+    }
+    TOKEN = data.accessToken;
+    localStorage.setItem('nj_admin_token', TOKEN);
+    document.getElementById('hdr-username').textContent = data.username;
+    document.getElementById('login-screen').style.opacity = '0';
+    setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; }, 400);
+    document.getElementById('app').style.display = 'block';
+    loadAll();
+  } catch (err) { alert('No se pudo conectar con el servidor.'); }
+});
+
+function logout() {
+  localStorage.removeItem('nj_admin_token');
+  location.reload();
+}
+
+// ===== TABS =====
+function switchTab(tab, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===== LOAD ALL =====
+function loadAll() { loadDashboard(); loadEntities(); loadUsers(); loadTickets(); }
+
+// ===== DASHBOARD =====
+async function loadDashboard() {
+  const [eRes, uRes, tRes] = await Promise.all([
+    api('/admin/entities'), api('/admin/users'), api('/admin/tickets')
+  ]);
+  const entities = await eRes.json();
+  const users = await uRes.json();
+  const tickets = await tRes.json();
+  document.getElementById('stat-entities').textContent = entities.length;
+  document.getElementById('stat-users').textContent = users.length;
+  document.getElementById('stat-open').textContent = tickets.filter(t => t.status === 'open').length;
+  document.getElementById('stat-resolved').textContent = tickets.filter(t => t.status === 'resolved').length;
+  const urgent = tickets.filter(t => t.urgency == 3).slice(0, 8);
+  const tbody = document.getElementById('dash-tickets-body');
+  if (!urgent.length) { tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">Sin tickets urgentes 🎉</div></td></tr>'; return; }
+  tbody.innerHTML = urgent.map(t => `
+    <tr>
+      <td>#${t.id}</td>
+      <td>${t.title}</td>
+      <td>${t.username || '—'}</td>
+      <td>${t.entity_name || '—'}</td>
+      <td><span class="status-badge status-${t.status}">${statusLabel(t.status)}</span></td>
+    </tr>`).join('');
+}
+
+// ===== ENTITIES =====
+let entitiesCache = [];
+async function loadEntities() {
+  const res = await api('/admin/entities');
+  entitiesCache = await res.json();
+  renderEntities();
+  populateEntitySelects();
+}
+function renderEntities() {
+  const tbody = document.getElementById('entities-body');
+  if (!entitiesCache.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="icon">🏢</div>No hay entidades. ¡Crea una!</div></td></tr>'; return; }
+  tbody.innerHTML = entitiesCache.map(e => `
+    <tr>
+      <td>${e.id}</td>
+      <td><strong>${e.name}</strong></td>
+      <td style="color:var(--muted)">${e.description || '—'}</td>
+      <td>${e.user_count || 0}</td>
+      <td style="color:var(--muted);font-size:0.8rem">${fmtDate(e.created_at)}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="openEntityModal(${e.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteEntity(${e.id},'${e.name}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+function populateEntitySelects() {
+  ['user-entity', 'filter-entity'].forEach(id => {
+    const sel = document.getElementById(id);
+    const first = id === 'filter-entity' ? '<option value="">Todas las entidades</option>' : '<option value="">Sin entidad</option>';
+    sel.innerHTML = first + entitiesCache.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+  });
+}
+function openEntityModal(id = null) {
+  document.getElementById('entity-edit-id').value = '';
+  document.getElementById('entity-name').value = '';
+  document.getElementById('entity-desc').value = '';
+  document.getElementById('entity-modal-title').textContent = 'Nueva Entidad';
+  if (id) {
+    const e = entitiesCache.find(x => x.id === id);
+    if (e) {
+      document.getElementById('entity-edit-id').value = e.id;
+      document.getElementById('entity-name').value = e.name;
+      document.getElementById('entity-desc').value = e.description || '';
+      document.getElementById('entity-modal-title').textContent = 'Editar Entidad';
+    }
+  }
+  openModal('modal-entity');
+}
+async function saveEntity() {
+  const id = document.getElementById('entity-edit-id').value;
+  const name = document.getElementById('entity-name').value.trim();
+  const description = document.getElementById('entity-desc').value.trim();
+  if (!name) { toast('El nombre es requerido.', 'error'); return; }
+  const res = id
+    ? await api(`/admin/entities/${id}`, { method: 'PUT', body: JSON.stringify({ name, description }) })
+    : await api('/admin/entities', { method: 'POST', body: JSON.stringify({ name, description }) });
+  const data = await res.json();
+  if (res.ok) { toast(data.message); closeModal('modal-entity'); loadEntities(); }
+  else toast(data.message, 'error');
+}
+async function deleteEntity(id, name) {
+  if (!confirm(`¿Eliminar la entidad "${name}"?`)) return;
+  const res = await api(`/admin/entities/${id}`, { method: 'DELETE' });
+  const data = await res.json();
+  if (res.ok) { toast(data.message); loadEntities(); }
+  else toast(data.message, 'error');
+}
+
+// ===== USERS =====
+let usersCache = [];
+async function loadUsers() {
+  const res = await api('/admin/users');
+  usersCache = await res.json();
+  renderUsers();
+}
+function renderUsers() {
+  const tbody = document.getElementById('users-body');
+  if (!usersCache.length) { tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="icon">👥</div>No hay usuarios.</div></td></tr>'; return; }
+  tbody.innerHTML = usersCache.map(u => `
+    <tr>
+      <td><strong>${u.username}</strong></td>
+      <td>${u.company}</td>
+      <td style="color:var(--muted)">${u.department || '—'}</td>
+      <td>${u.entity_name || '<span style="color:var(--muted)">Sin entidad</span>'}</td>
+      <td><span class="role-${u.role}">${u.role}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="openUserModal(${u.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id},'${u.username}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+function openUserModal(id = null) {
+  document.getElementById('user-edit-id').value = '';
+  document.getElementById('user-username').value = '';
+  document.getElementById('user-password').value = '';
+  document.getElementById('user-company').value = '';
+  document.getElementById('user-dept').value = '';
+  document.getElementById('user-entity').value = '';
+  document.getElementById('user-role').value = 'user';
+  document.getElementById('user-modal-title').textContent = 'Nuevo Usuario';
+  document.getElementById('user-username').disabled = false;
+  if (id) {
+    const u = usersCache.find(x => x.id === id);
+    if (u) {
+      document.getElementById('user-edit-id').value = u.id;
+      document.getElementById('user-username').value = u.username;
+      document.getElementById('user-username').disabled = true;
+      document.getElementById('user-company').value = u.company;
+      document.getElementById('user-dept').value = u.department || '';
+      document.getElementById('user-entity').value = u.entity_id || '';
+      document.getElementById('user-role').value = u.role;
+      document.getElementById('user-modal-title').textContent = 'Editar Usuario';
+    }
+  }
+  openModal('modal-user');
+}
+async function saveUser() {
+  const id = document.getElementById('user-edit-id').value;
+  const body = {
+    company: document.getElementById('user-company').value.trim(),
+    department: document.getElementById('user-dept').value.trim(),
+    role: document.getElementById('user-role').value,
+    entity_id: document.getElementById('user-entity').value || null,
+    password: document.getElementById('user-password').value,
+  };
+  if (!id) body.username = document.getElementById('user-username').value.trim();
+  if (!id && !body.username) { toast('El usuario es requerido.', 'error'); return; }
+  if (!id && !body.password) { toast('La contraseña es requerida.', 'error'); return; }
+  const res = id
+    ? await api(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(body) })
+    : await api('/admin/users', { method: 'POST', body: JSON.stringify(body) });
+  const data = await res.json();
+  if (res.ok) { toast(data.message); closeModal('modal-user'); loadUsers(); }
+  else toast(data.message, 'error');
+}
+async function deleteUser(id, username) {
+  if (!confirm(`¿Eliminar al usuario "${username}"?`)) return;
+  const res = await api(`/admin/users/${id}`, { method: 'DELETE' });
+  const data = await res.json();
+  if (res.ok) { toast(data.message); loadUsers(); }
+  else toast(data.message, 'error');
+}
+
+// ===== TICKETS =====
+async function loadTickets() {
+  const entity = document.getElementById('filter-entity').value;
+  const status = document.getElementById('filter-status').value;
+  const params = new URLSearchParams();
+  if (entity) params.append('entity_id', entity);
+  if (status) params.append('status', status);
+  const res = await api('/admin/tickets?' + params.toString());
+  const tickets = await res.json();
+  renderTickets(tickets);
+}
+function renderTickets(tickets) {
+  const tbody = document.getElementById('tickets-body');
+  if (!tickets.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="icon">🎫</div>No hay tickets.</div></td></tr>'; return; }
+  tbody.innerHTML = tickets.map(t => `
+    <tr>
+      <td>#${t.id}</td>
+      <td><strong>${t.title}</strong><br><small style="color:var(--muted)">${(t.description||'').substring(0,60)}...</small></td>
+      <td>${t.username || '—'}</td>
+      <td>${t.entity_name || '—'}</td>
+      <td class="urgency-${t.urgency}">${urgencyLabel(t.urgency)}</td>
+      <td>
+        <select class="status-select" onchange="updateTicketStatus(${t.id}, this.value)" style="width:auto;padding:4px 8px;font-size:0.8rem">
+          <option value="open" ${t.status==='open'?'selected':''}>Abierto</option>
+          <option value="pending" ${t.status==='pending'?'selected':''}>Pendiente</option>
+          <option value="resolved" ${t.status==='resolved'?'selected':''}>Resuelto</option>
+          <option value="closed" ${t.status==='closed'?'selected':''}>Cerrado</option>
+        </select>
+      </td>
+      <td style="color:var(--muted);font-size:0.8rem">${fmtDate(t.created_at)}</td>
+      <td style="display:flex;gap:6px;align-items:center;">
+        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").substring(0,40)}', '${t.username||'Usuario'}', '${t.entity_name||'—'}')" title="Abrir chat">💬 Chat</button>
+        ${t.evidence_path ? `<a href="http://192.168.18.16:3000/${t.evidence_path}" target="_blank" class="btn btn-ghost btn-sm">📎</a>` : ''}
+      </td>
+    </tr>`).join('');
+}
+async function updateTicketStatus(id, status) {
+  const res = await api(`/admin/tickets/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
+  const data = await res.json();
+  if (res.ok) toast('Estado actualizado ✓');
+  else toast(data.message, 'error');
+}
+
+// ===== TICKET CHAT (ADMIN) =====
+let chatTicketId = null;
+let chatPollInterval = null;
+
+function openChat(ticketId, title, username, entityName) {
+  chatTicketId = ticketId;
+  document.getElementById('chat-ticket-title').textContent = `💬 Ticket #${ticketId} — ${title}`;
+  document.getElementById('chat-ticket-meta').textContent = `👤 ${username}  |  🏢 ${entityName}`;
+  document.getElementById('chat-admin-input').value = '';
+  openModal('modal-ticket-chat');
+  loadChatMessages();
+  chatPollInterval = setInterval(loadChatMessages, 5000);
+}
+
+function closeChat() {
+  closeModal('modal-ticket-chat');
+  clearInterval(chatPollInterval);
+  chatPollInterval = null;
+  chatTicketId = null;
+}
+
+async function loadChatMessages() {
+  if (!chatTicketId) return;
+  const res = await api(`/tickets/${chatTicketId}/messages`);
+  if (!res.ok) return;
+  const messages = await res.json();
+  renderChatMessages(messages);
+}
+
+function renderChatMessages(messages) {
+  const area = document.getElementById('chat-messages-area');
+  if (!messages.length) {
+    area.innerHTML = '<div class="chat-empty">🗨️ Sin mensajes aún. Escribe la primera respuesta al cliente.</div>';
+    return;
+  }
+  const wasAtBottom = area.scrollHeight - area.scrollTop <= area.clientHeight + 40;
+  area.innerHTML = messages.map(m => {
+    const isAdmin = m.sender_role === 'admin';
+    const time = new Date(m.created_at).toLocaleTimeString('es-VE', { hour:'2-digit', minute:'2-digit' });
+    const date = new Date(m.created_at).toLocaleDateString('es-VE', { day:'2-digit', month:'short' });
+    return `<div class="chat-bubble ${isAdmin ? 'bubble-admin' : 'bubble-user'}">
+      ${isAdmin ? '🛠️' : '👤'} <strong>${m.sender_name}</strong>: ${m.message}
+      <div class="bubble-meta">${date} ${time}</div>
+    </div>`;
+  }).join('');
+  if (wasAtBottom) area.scrollTop = area.scrollHeight;
+}
+
+async function sendAdminMessage() {
+  const input = document.getElementById('chat-admin-input');
+  const message = input.value.trim();
+  if (!message || !chatTicketId) return;
+  const res = await api(`/admin/tickets/${chatTicketId}/messages`, { method: 'POST', body: JSON.stringify({ message }) });
+  const data = await res.json();
+  if (res.ok) {
+    input.value = '';
+    loadChatMessages();
+    toast('Respuesta enviada ✓');
+  } else {
+    toast(data.message || 'Error al enviar.', 'error');
+  }
+}
+
+// Cerrar chat al hacer click fuera del modal
+document.getElementById('modal-ticket-chat').addEventListener('click', function(e) {
+  if (e.target === this) closeChat();
+});
+
+// ===== HELPERS =====
+function statusLabel(s) { return { open:'Abierto', pending:'Pendiente', resolved:'Resuelto', closed:'Cerrado' }[s] || s; }
+function urgencyLabel(u) { return { 1:'🟢 Baja', 2:'🟡 Media', 3:'🔴 Alta' }[u] || u; }
+</script>
+</body>
+</html>
