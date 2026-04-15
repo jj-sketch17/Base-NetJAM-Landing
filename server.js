@@ -218,7 +218,8 @@ app.delete("/api/admin/users/:id", verifyToken, verifyAdmin, async (req, res) =>
 // --- TICKETS ---
 app.get("/api/admin/tickets", verifyToken, verifyAdmin, async (req, res) => {
   const { entity_id, status } = req.query;
-  let sql = `SELECT t.*, u.username, u.company, e.name as entity_name 
+  let sql = `SELECT t.*, u.username, u.company, e.name as entity_name,
+             (SELECT COUNT(*) FROM ticket_messages tm WHERE tm.ticket_id = t.id AND tm.is_read = 0 AND tm.sender_role = 'user') as unread_count
              FROM tickets t 
              LEFT JOIN users u ON t.user_id = u.id 
              LEFT JOIN entities e ON t.entity_id = e.id
@@ -231,7 +232,14 @@ app.get("/api/admin/tickets", verifyToken, verifyAdmin, async (req, res) => {
   try {
     conn = await pool.getConnection();
     const rows = await conn.query(sql, params);
-    res.json(rows);
+    
+    // Convertir BigInt de COUNT a Number para evitar el error de serialización JSON
+    const tickets = rows.map(t => ({
+      ...t,
+      unread_count: Number(t.unread_count || 0)
+    }));
+    
+    res.json(tickets);
   } catch (err) { res.status(500).send({ message: err.message }); }
   finally { if (conn) conn.release(); }
 });
@@ -264,6 +272,21 @@ app.get("/api/tickets/:id/messages", verifyToken, async (req, res) => {
       [req.params.id]
     );
     res.json(messages);
+  } catch (err) { res.status(500).send({ message: err.message }); }
+  finally { if (conn) conn.release(); }
+});
+
+// PUT marcar mensajes como leídos
+app.put("/api/tickets/:id/read", verifyToken, async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    if (req.user.role === "admin") {
+      await conn.query("UPDATE ticket_messages SET is_read = 1 WHERE ticket_id = ? AND sender_role = 'user'", [req.params.id]);
+    } else {
+      await conn.query("UPDATE ticket_messages SET is_read = 1 WHERE ticket_id = ? AND sender_role = 'admin'", [req.params.id]);
+    }
+    res.send({ success: true });
   } catch (err) { res.status(500).send({ message: err.message }); }
   finally { if (conn) conn.release(); }
 });
@@ -312,10 +335,40 @@ app.get("/api/my-tickets", verifyToken, async (req, res) => {
   try {
     conn = await pool.getConnection();
     const rows = await conn.query(
-      "SELECT * FROM tickets WHERE user_id = ? ORDER BY created_at DESC",
+      `SELECT t.*, 
+      (SELECT COUNT(*) FROM ticket_messages tm WHERE tm.ticket_id = t.id AND tm.is_read = 0 AND tm.sender_role = 'admin') as unread_count 
+      FROM tickets t WHERE t.user_id = ? ORDER BY t.created_at DESC`,
       [req.user.id]
     );
-    res.json(rows);
+    
+    // Convertir BigInt de COUNT a Number para evitar el error de serialización JSON
+    const tickets = rows.map(t => ({
+      ...t,
+      unread_count: Number(t.unread_count || 0)
+    }));
+    
+    res.json(tickets);
+  } catch (err) { res.status(500).send({ message: err.message }); }
+  finally { if (conn) conn.release(); }
+});
+
+// GET global notifications count
+app.get("/api/notifications", verifyToken, async (req, res) => {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    let count = 0;
+    if (req.user.role === "admin") {
+      const rows = await conn.query("SELECT COUNT(*) as unread FROM ticket_messages WHERE is_read = 0 AND sender_role = 'user'");
+      count = Number(rows[0].unread);
+    } else {
+      const rows = await conn.query(
+        "SELECT COUNT(*) as unread FROM ticket_messages tm JOIN tickets t ON tm.ticket_id = t.id WHERE tm.is_read = 0 AND tm.sender_role = 'admin' AND t.user_id = ?",
+        [req.user.id]
+      );
+      count = Number(rows[0].unread);
+    }
+    res.json({ unread_count: count });
   } catch (err) { res.status(500).send({ message: err.message }); }
   finally { if (conn) conn.release(); }
 });

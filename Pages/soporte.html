@@ -217,6 +217,10 @@
     <div id="my-tickets-box" class="box-soporte">
       <div class="user-status">
         <i class="fas fa-user-circle"></i> <span id="mt-display-user"></span> | <span id="mt-display-empresa"></span>
+        <span style="float:right; position:relative; margin-right:15px; cursor:default;" title="Notificaciones">
+          <i class="fas fa-bell"></i>
+          <span id="global-badge" style="display:none; position:absolute; top:-8px; right:-10px; background:var(--rojo); color:white; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:50%;">0</span>
+        </span>
       </div>
       <hr style="margin: 1rem auto;">
       <h2 style="margin-bottom: 1.5rem;">📋 Mis Tickets</h2>
@@ -236,7 +240,7 @@
   <script src="../js/particles.js"></script>
 
   <script>
-    const API_URL = 'http://192.168.18.16:3000/api';
+    const API_URL = 'http://186.188.38.3:3000/api';
     let USER_TOKEN = null;
     let USER_DATA = null;
     let myTicketsPollingIntervals = {};
@@ -361,14 +365,14 @@
       container.innerHTML = tickets.map(t => `
         <div class="ticket-card">
           <div class="ticket-card-header">
-            <h4>#${t.id} — ${t.title}</h4>
+            <h4>#${t.id} — ${t.title} ${t.unread_count > 0 ? `<span id="nuevo-badge-${t.id}" class="ticket-status-badge status-open" style="background:var(--rojo); color:white; margin-left:10px;"><i class="fas fa-comment-dots"></i> ${t.unread_count} Nuevo${t.unread_count > 1 ? 's' : ''}</span>` : ''}</h4>
             <span class="ticket-status-badge status-${t.status}">${statusMap[t.status] || t.status}</span>
           </div>
           <p class="ticket-desc">${(t.description || '').substring(0, 150)}${t.description && t.description.length > 150 ? '…' : ''}</p>
           <p style="font-size:0.75rem;color:rgba(255,255,255,0.35);margin-bottom:12px;">
             ${urgencyMap[t.urgency] || ''} &nbsp;·&nbsp; ${new Date(t.created_at).toLocaleDateString('es-VE', {day:'2-digit',month:'short',year:'numeric'})}
           </p>
-          <div class="chat-area">
+          <div class="chat-area" ${t.unread_count > 0 ? `onmouseenter="markTicketAsRead(${t.id}, this)"` : ''}>
             <h5>💬 Conversación</h5>
             <div class="chat-messages-user" id="chat-area-${t.id}">
               <div class="no-messages">Cargando...</div>
@@ -435,13 +439,68 @@
         });
         if (res.ok) {
           input.value = '';
-          loadTicketMessages(ticketId);
+          loadTicketMessages(ticketId); // Refresh immediately
+          markTicketAsRead(ticketId); // Si mandamos mensaje, cuenta como leído
         } else {
           const d = await res.json();
           alert(d.message || 'Error al enviar.');
         }
       } catch(e) { alert('Error de conexión.'); }
     }
+
+    // === NOTIFICACIONES GLOBALES Y MARCAR LEÍDO ===
+    async function pollNotifications() {
+      if(!USER_TOKEN) return;
+      try {
+        const res = await fetch(`${API_URL}/notifications`, {
+          headers: { 'Authorization': 'Bearer ' + USER_TOKEN }
+        });
+        if(res.ok) {
+          const data = await res.json();
+          const badge = document.getElementById('global-badge');
+          if(badge) {
+            if(data.unread_count > 0) {
+              badge.style.display = 'inline-block';
+              badge.innerText = data.unread_count;
+            } else {
+              badge.style.display = 'none';
+            }
+          }
+        }
+      } catch(e){}
+    }
+
+    async function markTicketAsRead(ticketId, element) {
+      if(!USER_TOKEN) return;
+      if (element) element.removeAttribute('onmouseenter');
+      try {
+        const res = await fetch(`${API_URL}/tickets/${ticketId}/read`, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + USER_TOKEN }
+        });
+        if(res.ok) {
+          // Remover el aviso visual para que no recargue The DOM causando loops
+          const badge = document.getElementById('nuevo-badge-' + ticketId);
+          if (badge) badge.style.display = 'none';
+          pollNotifications();
+        }
+      } catch(e){}
+    }
+
+    async function loadMyTicketsSilently() {
+      try {
+        const res = await fetch(`${API_URL}/my-tickets`, {
+          headers: { 'Authorization': 'Bearer ' + USER_TOKEN }
+        });
+        if (res.ok) {
+          const tickets = await res.json();
+          renderMyTickets(tickets);
+        }
+      } catch(e) {}
+    }
+
+    // Polling global (bell icon)
+    setInterval(pollNotifications, 5000);
 
     // === ENVÍO DE TICKET ===
     document.getElementById('ticket-form').addEventListener('submit', async (e) => {

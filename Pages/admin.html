@@ -289,6 +289,10 @@
     <div class="header-user">
       <span class="badge-admin">Admin</span>
       <span id="hdr-username" style="font-size:0.85rem;color:var(--muted);">—</span>
+      <span style="position:relative; margin:0 15px; cursor:default;" title="Notificaciones">
+        <i class="fas fa-bell" style="color:rgba(255,255,255,0.7);"></i>
+        <span id="global-badge-admin" style="display:none; position:absolute; top:-6px; right:-8px; background:var(--red); color:white; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:50%;">0</span>
+      </span>
       <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
     </div>
   </header>
@@ -445,7 +449,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script>
-const API_URL = 'http://192.168.18.16:3000/api';
+const API_URL = 'http://186.188.38.3:3000/api';
 let TOKEN = null;
 
 // ===== PARTICLES =====
@@ -716,7 +720,10 @@ function renderTickets(tickets) {
       </td>
       <td style="color:var(--muted);font-size:0.8rem">${fmtDate(t.created_at)}</td>
       <td style="display:flex;gap:6px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").substring(0,40)}', '${t.username||'Usuario'}', '${t.entity_name||'—'}')" title="Abrir chat">💬 Chat</button>
+        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").substring(0,40)}', '${t.username||'Usuario'}', '${t.entity_name||'—'}')" title="Abrir chat">
+          💬 Chat
+          ${t.unread_count > 0 ? `<span style="background:var(--red); color:white; padding:2px 6px; border-radius:6px; font-size:0.75rem; margin-left:6px;">${t.unread_count}</span>` : ''}
+        </button>
         ${t.evidence_path ? `<a href="http://192.168.18.16:3000/${t.evidence_path}" target="_blank" class="btn btn-ghost btn-sm">📎</a>` : ''}
       </td>
     </tr>`).join('');
@@ -740,6 +747,9 @@ function openChat(ticketId, title, username, entityName) {
   openModal('modal-ticket-chat');
   loadChatMessages();
   chatPollInterval = setInterval(loadChatMessages, 5000);
+  
+  // Al abrir el chat se asume que lee los mensajes de este ticket
+  markTicketAsReadAdmin(ticketId);
 }
 
 function closeChat() {
@@ -799,6 +809,43 @@ document.getElementById('modal-ticket-chat').addEventListener('click', function(
 // ===== HELPERS =====
 function statusLabel(s) { return { open:'Abierto', pending:'Pendiente', resolved:'Resuelto', closed:'Cerrado' }[s] || s; }
 function urgencyLabel(u) { return { 1:'🟢 Baja', 2:'🟡 Media', 3:'🔴 Alta' }[u] || u; }
+
+// === NOTIFICACIONES GLOBALES ADMIN ===
+async function pollAdminNotifications() {
+  const token = localStorage.getItem('nj_admin_token');
+  if(!token) return;
+  try {
+    const res = await api('/notifications');
+    if(res.ok) {
+      const data = await res.json();
+      const badge = document.getElementById('global-badge-admin');
+      if(badge) {
+        if(data.unread_count > 0) {
+          badge.style.display = 'inline-block';
+          badge.innerText = data.unread_count;
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    }
+  } catch(e){}
+}
+
+async function markTicketAsReadAdmin(ticketId) {
+  try {
+    const res = await api(`/tickets/${ticketId}/read`, { method: 'PUT' });
+    if(res.ok) {
+      pollAdminNotifications();
+      // Refresca la tabla solo si estamos viéndola para borrar el badge
+      if(document.getElementById('tab-tickets').classList.contains('active')){
+        loadTickets();
+      }
+    }
+  } catch(e){}
+}
+
+setInterval(pollAdminNotifications, 5000);
+pollAdminNotifications(); // Cargar la primera vez al entrar
 </script>
 </body>
 </html>
