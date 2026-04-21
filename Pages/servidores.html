@@ -7,7 +7,7 @@
   <title>Gestión de Servidores - NetJam</title>
   <link rel="stylesheet" href="../CSS/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="icon" href="../ASSETS/Logo NetJAM.ico" type="image/x-icon">
+  <link rel="icon" href="../ASSETS/Logo%20NetJAM.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -123,6 +123,9 @@
       <a href="../Index.html#contact-section" class="cta">SOLICITAR COTIZACIÓN</a>
       <a href="https://wa.me/584142969482" class="cta-outline">CONTACTAR POR WHATSAPP</a>
     </div>
+    <div style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.85rem; opacity: 0.5; letter-spacing: 1px;">
+      <p>&copy; <span id="year-serv">2026</span> Net.JAM. Todos los derechos reservados.</p>
+    </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -147,6 +150,10 @@
         "events": { "onhover": { "enable": true, "mode": "grab" } }
       }
     });
+
+    // Año dinámico
+    const yearEl = document.getElementById('year-serv');
+    if(yearEl) yearEl.textContent = new Date().getFullYear();
   </script>
 </body>
 

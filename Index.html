@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="icon" href="ASSETS/Logo NetJAM.ico" type="image/x-icon">
+  <link rel="icon" href="ASSETS/Logo%20NetJAM.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -56,7 +56,6 @@
     <div class="section stats-container">
       <div class="stat-item"><strong>99.9%</strong><span>UPTIME</span></div>
       <div class="stat-item"><strong>24/7</strong><span>SOPORTE</span></div>
-      <div class="stat-item"><strong>+10</strong><span>CLIENTES</span></div>
       <div class="stat-item"><strong>10 min</strong><span>RESPUESTA</span></div>
     </div>
 
@@ -107,7 +106,7 @@
 
     <section class="section side-by-side">
       <div class="text-block">
-        <p class="subtitle">POR QUÉ ELEGIRNOS</p>
+        <p class="subtitle">¿POR QUÉ ELEGIRNOS?</p>
         <h2>Somos tu mejor opción en soporte tecnológico</h2>
         <ul class="check-list">
           <li><i class="fas fa-check-circle"></i> <strong>Virtualización de Servidores:</strong> Optimizamos sus recursos con VMware.</li>
@@ -118,7 +117,7 @@
 
           <li><i class="fas fa-check-circle"></i> <strong>Implementación de Servidores:</strong> Configuración e instalación completa desde cero, listos para producción.</li>
 
-          <li><i class="fas fa-check-circle"></i> <strong>Infraestructura Escalable:</strong> Sus sistemas crecen junto con su negocio sin interrupciones.</li>
+          <li><i class="fas fa-check-circle"></i> <strong>Infraestructura Escalable:</strong> Los sistemas crecen junto con su negocio sin interrupciones.</li>
         </ul>
       </div>
       <div class="image-block">
@@ -138,20 +137,19 @@
       <div class="aboutText">
         <h2>Desde 2008, nuestro equipo se ha dedicado a implementar soluciones tecnológicas en las áreas de redes,
           servidores y soporte técnico de computadoras.</h2>
-        <p> Servidores y soporte técnico de computadoras.</h2>
-          En la actualidad siendo una era tecnológica, lo que mueve a toda institución para vender su producto o
+        <p>NetJAM te ofrece asesoría en soluciones tecnológicas que permitan optimizar la productividad de tus labores,
+          nos encargamos de realizar un análisis de riesgo basado en tus necesidades y requerimientos, para poder
+          generar planes tecnológicos escalables a corto, mediano y largo plazo, con el fin de garantizar la
+          optimización y protección de estaciones de trabajo, redes alámbricas e inalámbricas, servidores, respaldo de
+          datos y accesibilidad segura a ellos con alta disponibilidad.</p>
+        <hr>
+        <p> En la actualidad siendo una era tecnológica, lo que mueve a toda institución para vender su producto o
           servicio, es el valor de la información que estos generan día a día y el tiempo en el que lo realizan para
           conseguir la mayor productividad. Las tareas cotidianas como el registro de facturas, nominas o planes de
           trabajo, documentados con software de ofimática y sistemas administrativos, deben hacerse de forma efectiva y
           ser resguardados de forma segura, además la comunicación es un pilar clave en el cumplimiento de objetivos
           corporativos, por lo que una red organizada, estable y con prevención a fallos facilitara el uso de sistemas
-          administrativos y recursos locales o en nube.</p>
-        <hr>
-        <p> NetJAM te ofrece asesoría en soluciones tecnológicas que permitan optimizar la productividad de tus labores,
-          nos encargamos de realizar un análisis de riesgo basado en tus necesidades y requerimientos, para poder
-          generar planes tecnológicos escalables a corto, mediano y largo plazo, con el fin de garantizar la
-          optimización y protección de estaciones de trabajo, redes alámbricas e inalámbricas, servidores, respaldo de
-          datos y accesibilidad segura a ellos con alta disponibilidad.
+          administrativos y recursos locales o en nube.
         </p>
       </div>
     </section>
@@ -195,10 +193,13 @@
 
   <footer class="footer-cta">
     <h2>¿Listo para llevar la tecnología de tu empresa al siguiente nivel?</h2>
-    <p>Únete a más de 10 Empresas que confían en nosotros.</p>
+    <p>Únete a la creciente lista de empresas que confían en nosotros.</p>
     <div class="hero-btns">
       <a href="#" class="cta">CONTACTAR AHORA</a>
       <a href="#" class="cta-outline">AGENDAR LLAMADA</a>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year">2026</span> Net.JAM. Todos los derechos reservados.</p>
     </div>
   </footer>
 
@@ -230,6 +231,9 @@
         mobileMenu.querySelector('i').classList.replace('fa-times', 'fa-bars');
       });
     });
+
+    // Actualizar el año del copyright automáticamente
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 

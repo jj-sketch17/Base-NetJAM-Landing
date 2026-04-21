@@ -152,7 +152,7 @@ app.post(
       const cleanTitle = sanitize(title);
       const cleanDesc = sanitize(description);
 
-      await conn.query(
+      const result = await conn.query(
         "INSERT INTO tickets (user_id, entity_id, title, urgency, description, evidence_path) VALUES (?, ?, ?, ?, ?, ?)",
         [
           req.user.id,
@@ -163,6 +163,18 @@ app.post(
           evidence_path,
         ],
       );
+
+      // Respuesta automática del sistema al crear el ticket
+      const newTicketId = result.insertId;
+      await conn.query(
+        "INSERT INTO ticket_messages (ticket_id, sender_role, sender_name, message, is_read) VALUES (?, 'admin', ?, ?, 1)",
+        [
+          newTicketId,
+          "NetJAM Bot 🤖",
+          "Hemos recibido tu solicitud correctamente. Lo atenderemos en breves momentos.\n\nSi tienes información adicional, puedes agregarla en este chat.",
+        ]
+      );
+
       // Notificación a Telegram
       const urgencyLabels = { 1: "🟢 Baja", 2: "🟡 Media", 3: "🔴 Alta" };
       const msg = `🎫 <b>Nuevo Ticket NetJAM</b>\n👤 Usuario: <b>${req.user.username}</b>\n🏢 Empresa: ${req.user.company}\n📋 Título: ${cleanTitle}\n⚡ Urgencia: ${urgencyLabels[urgency] || urgency}\n📝 ${cleanDesc}`;

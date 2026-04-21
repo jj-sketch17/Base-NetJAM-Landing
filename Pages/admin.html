@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NetJAM — Panel de Administración</title>
+  <link rel="icon" type="image/x-icon" href="../ASSETS/Logo%20NetJAM.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -418,6 +419,9 @@
           <i class="fas fa-home"></i> Volver al Inicio
         </a>
       </div>
+      <div style="text-align:center; margin-top:30px; opacity:0.3; font-size:0.7rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:15px;">
+        &copy; 2026 Net.JAM. Todos los derechos reservados.
+      </div>
       <p id="login-error" style="color:var(--danger);margin-top:12px;text-align:center;font-size:0.85rem;display:none;"></p>
     </form>
   </div>
@@ -527,6 +531,9 @@
         </div>
       </div>
 
+      <div style="text-align:center; padding:20px 0; opacity:0.4; font-size:0.75rem; border-top:1px solid var(--glass-border); margin-top:40px;">
+        &copy; <span id="year-admin">2026</span> Net.JAM. Todos los derechos reservados.
+      </div>
     </main>
   </div>
 </div>
@@ -887,7 +894,7 @@ function renderTickets(tickets) {
       </td>
       <td style="color:var(--muted);font-size:0.8rem">${fmtDate(t.created_at)}</td>
       <td style="display:flex;gap:6px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").substring(0,40)}', '${t.username||'Usuario'}', '${t.entity_name||'—'}', '${t.status}')" title="Abrir chat">
+        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").replace(/"/g,"&quot;").substring(0,40)}', '${(t.username||'Usuario').replace(/'/g,"\\'").replace(/"/g,"&quot;")}', '${(t.entity_name||'—').replace(/'/g,"\\'").replace(/"/g,"&quot;")}', '${t.status}')" title="Abrir chat">
           💬 Chat
           ${t.unread_count > 0 ? `<span style="background:var(--red); color:white; padding:2px 6px; border-radius:6px; font-size:0.75rem; margin-left:6px;">${t.unread_count}</span>` : ''}
         </button>
@@ -1078,6 +1085,10 @@ document.addEventListener('mousemove', e => {
     setTimeout(() => { p.remove(); }, 800);
   }
 });
+
+// Año dinámico
+const yearEl = document.getElementById('year-admin');
+if(yearEl) yearEl.textContent = new Date().getFullYear();
 </script>
 
 </body>

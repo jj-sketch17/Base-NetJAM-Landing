@@ -7,7 +7,7 @@
   <title>Soporte Técnico - NetJAM</title>
   <link rel="stylesheet" href="../CSS/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="icon" href="../ASSETS/Logo NetJAM.ico" type="image/x-icon">
+  <link rel="icon" href="../ASSETS/Logo%20NetJAM.ico" type="image/x-icon">
   <style>
     /* === CHAT STYLES === */
     .support-container { position: relative; z-index: 1; }
@@ -256,6 +256,10 @@
     </div>
 
   </main>
+
+  <footer style="text-align: center; padding: 20px; opacity: 0.4; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px;">
+    &copy; <span id="year-soporte">2026</span> Net.JAM. Todos los derechos reservados.
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="../js/particles.js"></script>
@@ -608,6 +612,10 @@
     }
     urgencySlider.addEventListener('input', updateSliderColor);
     updateSliderColor();
+
+    // Año dinámico
+    const yearEl = document.getElementById('year-soporte');
+    if(yearEl) yearEl.textContent = new Date().getFullYear();
   </script>
 </body>
 

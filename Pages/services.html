@@ -131,6 +131,9 @@
       <a href="soporte.html" class="cta">IR AL PORTAL DE SOPORTE</a>
       <a href="https://wa.me/584142969482" class="cta-outline">HABLAR POR WHATSAPP</a>
     </div>
+    <div style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.85rem; opacity: 0.5; letter-spacing: 1px; text-align: center;">
+      <p>&copy; <span id="year-servi">2026</span> Net.JAM. Todos los derechos reservados.</p>
+    </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -155,6 +158,10 @@
         "events": { "onhover": { "enable": true, "mode": "grab" } }
       }
     });
+
+    // Año dinámico
+    const yearEl = document.getElementById('year-servi');
+    if(yearEl) yearEl.textContent = new Date().getFullYear();
   </script>
 </body>
 
