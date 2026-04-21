@@ -102,6 +102,21 @@
       transition: background 0.2s;
     }
     .btn-new-ticket:hover { background: rgba(246,255,0,0.2); }
+
+    .chat-closed-banner {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
   </style>
 </head>
 
@@ -156,8 +171,14 @@
         </div>
         <br>
         <button type="submit" class="cta btn-submit full-width">INGRESAR</button>
+        <div style="text-align:center; margin-top: 18px;">
+          <a href="../Index.html" style="color: rgba(255,255,255,0.4); font-size: 0.85rem; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" 
+             onmouseover="this.style.color='#f6ff00'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+            <i class="fas fa-arrow-left"></i> Volver al Inicio Portal
+          </a>
+        </div>
       </form>
-      <div style="text-align:center; margin-top: 18px;">
+      <div style="text-align:center; margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 18px;">
         <a href="admin.html" style="color: rgba(255,255,255,0.35); font-size: 0.78rem; text-decoration: none; transition: color 0.2s;"
            onmouseover="this.style.color='rgba(224,27,36,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
           🔒 Acceso Administradores
@@ -240,7 +261,7 @@
   <script src="../js/particles.js"></script>
 
   <script>
-    const API_URL = 'http://186.188.38.3:3000/api';
+    const API_URL = 'https://netjam.net.ve/api';
     let USER_TOKEN = null;
     let USER_DATA = null;
     let myTicketsPollingIntervals = {};
@@ -377,10 +398,16 @@
             <div class="chat-messages-user" id="chat-area-${t.id}">
               <div class="no-messages">Cargando...</div>
             </div>
-            <div class="chat-send-row">
-              <input type="text" id="chat-input-${t.id}" placeholder="Escribe un comentario adicional..." onkeydown="if(event.key==='Enter') sendUserMessage(${t.id})">
-              <button class="btn-send-chat" onclick="sendUserMessage(${t.id})">Enviar</button>
-            </div>
+            ${t.status === 'closed' ? `
+              <div class="chat-closed-banner">
+                <i class="fas fa-lock"></i> Este ticket ha sido cerrado y no admite más mensajes.
+              </div>
+            ` : `
+              <div class="chat-send-row">
+                <input type="text" id="chat-input-${t.id}" placeholder="Escribe un comentario adicional..." onkeydown="if(event.key==='Enter') sendUserMessage(${t.id})">
+                <button class="btn-send-chat" onclick="sendUserMessage(${t.id})">Enviar</button>
+              </div>
+            `}
           </div>
         </div>
       `).join('');
@@ -419,7 +446,7 @@
         const time = new Date(m.created_at).toLocaleTimeString('es-VE', { hour:'2-digit', minute:'2-digit' });
         const date = new Date(m.created_at).toLocaleDateString('es-VE', { day:'2-digit', month:'short' });
         return `<div class="chat-bubble-u ${isAdmin ? 'bubble-from-admin' : 'bubble-from-user'}">
-          ${isAdmin ? '🛠️ <strong>NetJAM</strong>' : '👤 <strong>' + m.sender_name + '</strong>'}: ${m.message}
+          ${isAdmin ? '🛠️ <strong>NetJAM</strong>' : '👤 <strong>' + m.sender_name + '</strong>'}: ${(m.message || '').replace(/\n/g, '<br>')}
           <div class="bubble-meta-u">${date} ${time}</div>
         </div>`;
       }).join('');
@@ -449,6 +476,10 @@
     }
 
     // === NOTIFICACIONES GLOBALES Y MARCAR LEÍDO ===
+    let lastUnreadCount = 0;
+    const notifySound = new Audio('../ASSETS/sounds/notification.mp3');
+    notifySound.volume = 0.5;
+
     async function pollNotifications() {
       if(!USER_TOKEN) return;
       try {
@@ -458,6 +489,17 @@
         if(res.ok) {
           const data = await res.json();
           const badge = document.getElementById('global-badge');
+
+          // Si el contador aumentó, reproducir sonido
+          if (data.unread_count > lastUnreadCount) {
+            notifySound.play().catch(e => console.log('Audio blocking:', e));
+            // Refrescar lista de tickets si está visible para mostrar los nuevos badges
+            if (document.getElementById('my-tickets-box').classList.contains('visible')) {
+              loadMyTicketsSilently();
+            }
+          }
+          lastUnreadCount = data.unread_count;
+
           if(badge) {
             if(data.unread_count > 0) {
               badge.style.display = 'inline-block';

@@ -307,32 +307,48 @@ hr {
   color: var(--fondo);
 }
 
-/* Footer Final */
+/* Footer Final Mejorado */
 .footer-cta {
-  background: var(--rojo);
-  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #050508 0%, #1a1a1f 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 8rem 2rem;
   text-align: center;
   color: white;
+  position: relative;
+}
+
+.footer-cta h2 {
+  font-size: 2.2rem;
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+}
+
+.footer-cta p {
+  opacity: 0.7;
+  margin-bottom: 3rem;
 }
 
 .footer-cta .cta {
-  background: white;
-  color: var(--rojo);
+  background: var(--rojo);
+  color: white;
+  box-shadow: 0 10px 20px rgba(224, 27, 36, 0.2);
 }
 
 .footer-cta .cta:hover {
-  background: var(--plateado);
-  color: var(--texto-oscuro);
+  background: #cc0000;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(224, 27, 36, 0.4);
 }
 
 .footer-cta .cta-outline {
-  border-color: white;
+  border-color: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
 .footer-cta .cta-outline:hover {
   background: white;
-  color: var(--rojo);
+  color: #000;
+  border-color: white;
 }
 
 /* =========================================

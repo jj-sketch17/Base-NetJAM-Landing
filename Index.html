@@ -43,7 +43,7 @@
   <main>
     <section class="hero">
       <div class="hero-content">
-        <img src="ASSETS/Logo NetJAM.JPG" alt="NetJam Logo" class="hero-logo">
+        <img src="ASSETS/Logo NetJAM.jpg" alt="NetJam Logo" class="hero-logo">
         <h1>Impulsamos el Crecimiento con <span class="text-gradient">Tecnología</span></h1>
         <p>Soluciones ágiles para negocios en crecimiento.</p>
         <div class="hero-btns">
@@ -66,7 +66,7 @@
 
       <div class="expanding-gallery">
 
-        <a href="Pages/redes.html" class="expanding-card" style="background-image: url('ASSETS/Instalacion\ de\ Redes.jpg');">
+        <a href="Pages/redes.html" class="expanding-card" style="background-image: url('ASSETS/Instalacion%20de%20Redes.jpg');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-network-wired"></i>
@@ -78,7 +78,7 @@
           </div>
         </a>
 
-        <a href="Pages/servidores.html" class="expanding-card" style="background-image: url('ASSETS/Gestion\ de\ servidores.jpg');">
+        <a href="Pages/servidores.html" class="expanding-card" style="background-image: url('ASSETS/Gestion%20de%20Servidores.jpg');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-server"></i>
@@ -90,7 +90,7 @@
           </div>
         </a>
 
-        <a href="Pages/services.html" class="expanding-card" style="background-image: url('ASSETS/Soporte\ Tecnico.jpg');">
+        <a href="Pages/services.html" class="expanding-card" style="background-image: url('ASSETS/Soporte%20Tecnico.jpg');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-headset"></i>
@@ -162,11 +162,7 @@
         <h2>Queremos saber en qué podemos ayudarte</h2>
       </div>
       
-      <form action="https://formsubmit.co/soporte@netjam.net.ve" method="POST" class="contact-form">
-        <!-- Campo oculto para el asunto del correo -->
-        <input type="hidden" name="_subject" value="Nuevo mensaje de contacto desde la Web - NetJAM">
-        <!-- Evita que el usuario tenga que resolver captchas (opcional, pero mejora la experiencia) -->
-        <input type="hidden" name="_captcha" value="false">
+      <form action="contact.php" method="POST" class="contact-form">
         <div class="form-grid">
           <div class="form-group">
             <label>Nombre Completo</label>

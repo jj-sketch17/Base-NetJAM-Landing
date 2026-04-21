@@ -6,6 +6,7 @@
   <title>NetJAM — Panel de Administración</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,38 +28,138 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
+      background: #050508;
       color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
+      height: 100vh; /* Altura fija */
+      overflow: hidden; /* Evita scroll en el body */
+      position: relative;
     }
 
-    /* ---- PARTICLES BG ---- */
-    #particles-js { position: fixed; inset: 0; z-index: 0; }
+    /* Interactive Mouse Glow */
+    #mouse-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(224, 27, 36, 0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      filter: blur(80px);
+      transition: width 0.3s, height 0.3s;
+    }
+
+    /* Ambient Mesh Gradient */
+    .mesh-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: 
+        radial-gradient(at 0% 0%, rgba(224, 27, 36, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(81, 0, 255, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(224, 27, 36, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(81, 0, 255, 0.05) 0px, transparent 50%);
+      background-size: 100% 100%;
+      animation: mesh-move 15s ease infinite alternate;
+    }
+
+    @keyframes mesh-move {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(circle at center, black, transparent 90%);
+      z-index: -1;
+      opacity: 0.3;
+    }
+
+    /* Trailing Cursor Particles */
+    .cursor-particle {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      filter: blur(2px);
+      animation: particle-fade 0.8s forwards;
+    }
+
+    @keyframes particle-fade {
+      0% { transform: scale(1) translateY(0); opacity: 0.8; }
+      100% { transform: scale(0.2) translateY(20px); opacity: 0; }
+    }
 
     /* ---- LOGIN ---- */
     #login-screen {
-      position: fixed; inset: 0; z-index: 10;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(10,10,15,0.95);
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent; /* Transparente para ver los efectos de fondo */
+      z-index: 100;
+      padding: 20px;
       transition: opacity 0.4s;
     }
     .login-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 48px 40px;
+      background: rgba(15, 15, 20, 0.1); 
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 56px 40px;
       width: 100%;
-      max-width: 400px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      max-width: 420px;
+      backdrop-filter: blur(40px) saturate(180%);
+      -webkit-backdrop-filter: blur(40px) saturate(180%);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+      position: relative;
+      overflow: hidden;
+      z-index: 101;
     }
-    .login-card .logo { text-align: center; margin-bottom: 8px; }
-    .login-card .logo img { height: 54px; }
-    .login-card h2 { text-align: center; font-size: 1.1rem; color: var(--muted); font-weight: 400; margin-bottom: 32px; }
+    /* Card sweep animation */
+    .login-card::after {
+      content: "";
+      position: absolute;
+      top: -50%; left: -150%;
+      width: 100%; height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      transform: rotate(25deg);
+      animation: sweep 8s infinite;
+    }
+    @keyframes sweep {
+      0% { left: -150%; }
+      20% { left: 150%; }
+      100% { left: 150%; }
+    }
+    .login-card::before {
+      content: ""; position: absolute; inset: -1px;
+      border-radius: 24px; padding: 1px;
+      background: linear-gradient(135deg, rgba(224,27,36,0.4), transparent 40%, transparent 60%, rgba(224,27,36,0.4));
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+    .login-card .logo { text-align: center; margin-bottom: 12px; }
+    .login-card .logo img { height: 60px; filter: drop-shadow(0 0 20px rgba(224,27,36,0.3)); }
+    .login-card h2 { text-align: center; font-size: 1.1rem; color: var(--muted); font-weight: 400; margin-bottom: 32px; letter-spacing: 0.05em; }
 
     /* ---- LAYOUT ---- */
-    #app { display: none; position: relative; z-index: 1; min-height: 100vh; }
+    #app { 
+      display: none; 
+      position: fixed; /* Fijo para controlar su propio scroll */
+      inset: 0;
+      z-index: 50; 
+      overflow-y: auto; /* El scroll ocurre aquí dentro */
+      background: rgba(5, 5, 8, 0.4); 
+      backdrop-filter: blur(5px);
+    }
 
     header {
       background: rgba(10,10,15,0.85);
@@ -146,6 +247,40 @@
     .urgency-3 { color: var(--danger); font-weight: 600; }
     .role-admin { background: rgba(224,27,36,0.15); color: var(--red); padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
     .role-user { background: rgba(255,255,255,0.06); color: var(--muted); padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; }
+
+    /* --- UNREAD INDICATORS --- */
+    .unread-row {
+      background: rgba(224, 27, 36, 0.03) !important;
+      box-shadow: inset 4px 0 0 var(--red);
+    }
+    .pulse-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: var(--red);
+      border-radius: 50%;
+      margin-right: 8px;
+      box-shadow: 0 0 0 rgba(224, 27, 36, 0.4);
+      animation: pulse-red 2s infinite;
+      vertical-align: middle;
+    }
+    @keyframes pulse-red {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(224, 27, 36, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(224, 27, 36, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(224, 27, 36, 0); }
+    }
+    .new-badge {
+      background: var(--red);
+      color: white;
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin-left: 8px;
+      vertical-align: middle;
+      letter-spacing: 0.05em;
+    }
 
     /* ---- ACTION BUTTONS ---- */
     .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
@@ -255,6 +390,10 @@
 </head>
 <body>
 
+<!-- ===== BACKGROUND ELEMENTS ===== -->
+<div id="mouse-glow"></div>
+<div class="mesh-bg"></div>
+<div class="bg-grid"></div>
 <div id="particles-js"></div>
 
 <!-- ===== LOGIN ===== -->
@@ -274,6 +413,11 @@
         <input type="password" id="admin-pass" placeholder="••••••••" required />
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%;margin-top:8px;padding:12px;">Ingresar</button>
+      <div style="text-align:center; margin-top: 20px;">
+        <a href="../Index.html" style="color: var(--muted); font-size: 0.82rem; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
+          <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+      </div>
       <p id="login-error" style="color:var(--danger);margin-top:12px;text-align:center;font-size:0.85rem;display:none;"></p>
     </form>
   </div>
@@ -289,7 +433,7 @@
     <div class="header-user">
       <span class="badge-admin">Admin</span>
       <span id="hdr-username" style="font-size:0.85rem;color:var(--muted);">—</span>
-      <span style="position:relative; margin:0 15px; cursor:default;" title="Notificaciones">
+      <span style="position:relative; margin:0 15px; cursor:pointer;" title="Notificaciones" onclick="goToTickets()">
         <i class="fas fa-bell" style="color:rgba(255,255,255,0.7);"></i>
         <span id="global-badge-admin" style="display:none; position:absolute; top:-6px; right:-8px; background:var(--red); color:white; font-size:10px; font-weight:bold; padding:2px 5px; border-radius:50%;">0</span>
       </span>
@@ -449,7 +593,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script>
-const API_URL = 'http://186.188.38.3:3000/api';
+const API_URL = 'https://netjam.net.ve/api';
 let TOKEN = null;
 
 // ===== PARTICLES =====
@@ -517,6 +661,15 @@ function switchTab(tab, btn) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   btn.classList.add('active');
+}
+function goToTickets() {
+  const ticketsBtn = document.querySelector('.nav-item[data-tab="tickets"]');
+  if (ticketsBtn) {
+    switchTab('tickets', ticketsBtn);
+    // Filtrar por Abiertos que es lo que genera notificación
+    document.getElementById('filter-status').value = 'open';
+    loadTickets();
+  }
 }
 
 // ===== LOAD ALL =====
@@ -703,10 +856,24 @@ async function loadTickets() {
 function renderTickets(tickets) {
   const tbody = document.getElementById('tickets-body');
   if (!tickets.length) { tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="icon">🎫</div>No hay tickets.</div></td></tr>'; return; }
-  tbody.innerHTML = tickets.map(t => `
-    <tr>
-      <td>#${t.id}</td>
-      <td><strong>${t.title}</strong><br><small style="color:var(--muted)">${(t.description||'').substring(0,60)}...</small></td>
+  tbody.innerHTML = tickets.map(t => {
+    // Un ticket es "nuevo" si está abierto y no ha sido revisado por el admin
+    const seenTickets = JSON.parse(localStorage.getItem('nj_seen_tickets') || '[]');
+    const isNew = t.status === 'open' && !seenTickets.includes(t.id);
+    // Tiene mensajes nuevos de usuarios no leidos por el admin
+    const hasUnread = t.unread_count > 0;
+    const isHighlighted = isNew || hasUnread;
+
+    return `
+    <tr class="${isHighlighted ? 'unread-row' : ''}">
+      <td>
+        ${isHighlighted ? '<span class="pulse-dot"></span>' : ''}
+        #${t.id}
+      </td>
+      <td>
+        <strong>${t.title}</strong> ${isNew ? '<span class="new-badge">Nuevo</span>' : (hasUnread ? '<span class="new-badge" style="background:#e67e22;">Resp</span>' : '')}
+        <br><small style="color:var(--muted)">${(t.description||'').substring(0,60)}...</small>
+      </td>
       <td>${t.username || '—'}</td>
       <td>${t.entity_name || '—'}</td>
       <td class="urgency-${t.urgency}">${urgencyLabel(t.urgency)}</td>
@@ -720,13 +887,14 @@ function renderTickets(tickets) {
       </td>
       <td style="color:var(--muted);font-size:0.8rem">${fmtDate(t.created_at)}</td>
       <td style="display:flex;gap:6px;align-items:center;">
-        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").substring(0,40)}', '${t.username||'Usuario'}', '${t.entity_name||'—'}')" title="Abrir chat">
+        <button class="btn btn-ghost btn-sm" onclick="openChat(${t.id}, '${(t.title||'').replace(/'/g,"\\'").substring(0,40)}', '${t.username||'Usuario'}', '${t.entity_name||'—'}', '${t.status}')" title="Abrir chat">
           💬 Chat
           ${t.unread_count > 0 ? `<span style="background:var(--red); color:white; padding:2px 6px; border-radius:6px; font-size:0.75rem; margin-left:6px;">${t.unread_count}</span>` : ''}
         </button>
-        ${t.evidence_path ? `<a href="http://192.168.18.16:3000/${t.evidence_path}" target="_blank" class="btn btn-ghost btn-sm">📎</a>` : ''}
+        ${t.evidence_path ? `<a href="http://186.188.38.3:3000/${t.evidence_path}" target="_blank" class="btn btn-ghost btn-sm">📎</a>` : ''}
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 async function updateTicketStatus(id, status) {
   const res = await api(`/admin/tickets/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
@@ -739,11 +907,28 @@ async function updateTicketStatus(id, status) {
 let chatTicketId = null;
 let chatPollInterval = null;
 
-function openChat(ticketId, title, username, entityName) {
+function openChat(ticketId, title, username, entityName, status) {
   chatTicketId = ticketId;
+
+  // Marcar este ticket como "visto" para quitar el indicador de Nuevo
+  const seenTickets = JSON.parse(localStorage.getItem('nj_seen_tickets') || '[]');
+  if (!seenTickets.includes(ticketId)) {
+    seenTickets.push(ticketId);
+    localStorage.setItem('nj_seen_tickets', JSON.stringify(seenTickets));
+  }
+
   document.getElementById('chat-ticket-title').textContent = `💬 Ticket #${ticketId} — ${title}`;
   document.getElementById('chat-ticket-meta').textContent = `👤 ${username}  |  🏢 ${entityName}`;
   document.getElementById('chat-admin-input').value = '';
+  
+  // Ocultar input si está cerrado
+  const inputRow = document.querySelector('.chat-input-row');
+  if (status === 'closed') {
+    inputRow.style.display = 'none';
+  } else {
+    inputRow.style.display = 'flex';
+  }
+
   openModal('modal-ticket-chat');
   loadChatMessages();
   chatPollInterval = setInterval(loadChatMessages, 5000);
@@ -779,7 +964,7 @@ function renderChatMessages(messages) {
     const time = new Date(m.created_at).toLocaleTimeString('es-VE', { hour:'2-digit', minute:'2-digit' });
     const date = new Date(m.created_at).toLocaleDateString('es-VE', { day:'2-digit', month:'short' });
     return `<div class="chat-bubble ${isAdmin ? 'bubble-admin' : 'bubble-user'}">
-      ${isAdmin ? '🛠️' : '👤'} <strong>${m.sender_name}</strong>: ${m.message}
+      ${isAdmin ? '🛠️' : '👤'} <strong>${m.sender_name}</strong>: ${(m.message || '').replace(/\n/g, '<br>')}
       <div class="bubble-meta">${date} ${time}</div>
     </div>`;
   }).join('');
@@ -811,6 +996,10 @@ function statusLabel(s) { return { open:'Abierto', pending:'Pendiente', resolved
 function urgencyLabel(u) { return { 1:'🟢 Baja', 2:'🟡 Media', 3:'🔴 Alta' }[u] || u; }
 
 // === NOTIFICACIONES GLOBALES ADMIN ===
+let lastUnreadCount = 0;
+const notifySound = new Audio('../ASSETS/sounds/notification.mp3');
+notifySound.volume = 0.5;
+
 async function pollAdminNotifications() {
   const token = localStorage.getItem('nj_admin_token');
   if(!token) return;
@@ -819,6 +1008,16 @@ async function pollAdminNotifications() {
     if(res.ok) {
       const data = await res.json();
       const badge = document.getElementById('global-badge-admin');
+      
+      // Si el contador aumentó, reproducir sonido
+      if (data.unread_count > lastUnreadCount) {
+        notifySound.play().catch(e => console.log('Audio play blocked by browser. Need interaction.'));
+        // Si estamos en la pestaña tickets o dashboard, refrescar para mostrar lo nuevo
+        if (document.getElementById('tab-tickets').classList.contains('active')) loadTickets();
+        if (document.getElementById('tab-dashboard').classList.contains('active')) loadDashboard();
+      }
+      lastUnreadCount = data.unread_count;
+
       if(badge) {
         if(data.unread_count > 0) {
           badge.style.display = 'inline-block';
@@ -846,6 +1045,40 @@ async function markTicketAsReadAdmin(ticketId) {
 
 setInterval(pollAdminNotifications, 5000);
 pollAdminNotifications(); // Cargar la primera vez al entrar
+
+// Efecto de seguimiento de luz y Estela de Partículas (Estilo Fiber-Optic)
+const cursorColors = ['#e01b24', '#f5c518', '#e01b24'];
+let particleIndex = 0;
+
+document.addEventListener('mousemove', e => {
+  // Glow principal
+  const glow = document.getElementById('mouse-glow');
+  if (glow) {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  }
+
+  // Crear partícula de estela cada vez que movamos el mouse
+  if (Math.random() > 0.1) { // Controlar la densidad para que sea elegante
+    const p = document.createElement('div');
+    p.className = 'cursor-particle';
+    p.style.left = e.clientX + 'px';
+    p.style.top = e.clientY + 'px';
+    p.style.background = cursorColors[particleIndex % cursorColors.length];
+    
+    // Variar un poco el tamaño para naturalidad
+    const sz = 4 + Math.random() * 6;
+    p.style.width = sz + 'px';
+    p.style.height = sz + 'px';
+    
+    document.body.appendChild(p);
+    particleIndex++;
+
+    // Autodestruir después de la animación
+    setTimeout(() => { p.remove(); }, 800);
+  }
+});
 </script>
+
 </body>
 </html>
