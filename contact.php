@@ -1,5 +1,12 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // === TRAMPA ANTI-SPAM (HONEYPOT) ===
+    // Si este campo tiene algo, es un bot.
+    if (!empty($_POST["website"])) {
+        http_response_code(403);
+        exit("Acceso denegado: Bot detectado.");
+    }
+
     // Recibir y limpiar los datos del formulario para mayor seguridad
     $nombre = htmlspecialchars(trim($_POST["nombre"]));
     $empresa = htmlspecialchars(trim($_POST["empresa"]));
@@ -16,10 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // === CONFIGURACIÓN DEL EMAIL ===
     $destinatario = "netjam583@gmail.com"; 
-    $asunto = "Nuevo Cliente Potencial - Web NetJAM";
+    $asunto = "Nuevo Cliente Potencial - Web Net.JAM";
 
     // Formato del mensaje que llegará a tu correo
-    $contenido_correo = "Has recibido una nueva solicitud de contacto desde tu sitio web NetJAM.\n\n";
+    $contenido_correo = "Has recibido una nueva solicitud de contacto desde tu sitio web Net.JAM.\n\n";
     $contenido_correo .= "---------------------------------------\n";
     $contenido_correo .= "DATOS DEL CLIENTE:\n";
     $contenido_correo .= "Nombre: $nombre\n";
@@ -32,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Cabeceras (Headers) para asegurar que se puede responder al remitente
     // Nota: A veces los hostings requieren que el "From" sea una cuenta del propio dominio (ej: noreply@netjam.net.ve)
     // Para simplificar, usamos el email del remitente como Respond-A.
-    $headers = "From: Web NetJAM <noreply@netjam.net.ve>\r\n";
+    $headers = "From: Web Net.JAM <noreply@netjam.net.ve>\r\n";
     $headers .= "Reply-To: $email\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 

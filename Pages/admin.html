@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NetJAM — Panel de Administración</title>
-  <link rel="icon" type="image/x-icon" href="../ASSETS/Logo%20NetJAM.ico">
+  <title>Net.JAM — Panel de Administración</title>
+  <link rel="icon" type="image/x-icon" href="../ASSETS/favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
@@ -431,7 +431,10 @@
 <div id="app">
   <header>
     <div class="header-brand">
-      <img src="../ASSETS/NetJam Logo.png" alt="NetJAM" onerror="this.style.display='none'" />
+      <picture>
+        <source srcset="../ASSETS/logo-netjam-plano.webp" type="image/webp">
+        <img src="../ASSETS/logo-netjam-plano.jpg" alt="NetJAM" width="120" height="60" onerror="this.style.display='none'" />
+      </picture>
       <span>Panel Admin</span>
     </div>
     <div class="header-user">
