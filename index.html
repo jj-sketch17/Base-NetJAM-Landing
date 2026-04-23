@@ -61,8 +61,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="icon" href="ASSETS/favicon.ico" type="image/x-icon">
 </head>
 
@@ -278,8 +277,10 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
   <script defer>
     window.addEventListener('load', () => {
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.particlesJS) {
-        particlesJS.load('particles-js', 'js/particles.json');
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        var script = document.createElement('script');
+        script.src = './js/particles.js';
+        document.body.appendChild(script);
       }
     });
   </script>
