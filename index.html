@@ -39,8 +39,18 @@
     "foundingDate": "2008",
     "address": {
       "@type": "PostalAddress",
-      "addressCountry": "VE"
+      "addressCountry": "VE",
+      "addressLocality": "Caracas"
     },
+    "serviceArea": {
+      "@type": "Country",
+      "name": "Venezuela"
+    },
+    "openingHoursSpecification": [{
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+      "opens": "08:00", "closes": "18:00"
+    }],
     "sameAs": [
       "https://instagram.com/net.jam_ca"
     ]
@@ -51,18 +61,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
   <link rel="icon" href="ASSETS/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
+  <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
   <div id="particles-js"></div>
 
   <header>
     <nav class="navbar">
       <div class="logo-text">
-        <a href="./index.html">
+        <a href="/">
           <picture>
             <source srcset="./ASSETS/icono-nav.webp" type="image/webp">
             <img src="./ASSETS/icono-nav.jpg" alt="Logo Net.JAM" style="height: 60px; width: auto;">
@@ -78,19 +90,18 @@
         <li><a href="#about-section">Nosotros</a></li>
         <li><a href="#contact-section">Contacto</a></li>
         <li><a href="Pages/soporte.html">Soporte</a></li>
-        <li><a href="https://wa.me/584142969482?text=%C2%A1Hola!%20Bienvenido%20a%20nuestro%20servicio%20de%20soporte%20t%C3%A9cnico.%20Nos%20especializamos%20en%20redes%20y%20servidores.%20Si%20tienes%20alguna%20pregunta%20o%20problema,%20no%20dudes%20en%20escribirnos.%20Estamos%20aqu%C3%AD%20para%20ayudarte%2024/7.%20%C2%A1Gracias%20por%20elegirnos!" target="_blank"><i class="fab fa-whatsapp icon-whatsapp"></i></a></li>
-        <li><a href="https://instagram.com/net.jam_ca" target="_blank"><i
-              class="fab fa-instagram icon-instagram"></i></a></li>
+        <li><a href="https://wa.me/584142969482" aria-label="Contactar a Net.JAM por WhatsApp" target="_blank"><i class="fab fa-whatsapp icon-whatsapp" aria-hidden="true"></i></a></li>
+        <li><a href="https://instagram.com/net.jam_ca" aria-label="Visitar el Instagram de Net.JAM" target="_blank"><i class="fab fa-instagram icon-instagram" aria-hidden="true"></i></a></li>
       </ul>
     </nav>
   </header>
 
-  <main>
+  <main id="main-content">
     <section class="hero">
       <div class="hero-content">
         <picture>
           <source srcset="ASSETS/logo-netjam.webp" type="image/webp">
-          <img src="ASSETS/logo-netjam.jpg" alt="NetJam Logo" class="hero-logo" width="600" height="400">
+          <img src="ASSETS/logo-netjam.jpg" alt="NetJam Logo" class="hero-logo" width="600" height="400" loading="eager" fetchpriority="high">
         </picture>
         <h1>Impulsamos el Crecimiento con <span class="text-gradient">Tecnología</span></h1>
         <p>Soluciones ágiles para negocios en crecimiento.</p>
@@ -113,7 +124,7 @@
 
       <div class="expanding-gallery">
 
-        <a href="Pages/redes.html" class="expanding-card" style="background-image: url('ASSETS/Instalacion%20de%20Redes.jpg');">
+        <a href="Pages/redes.html" class="expanding-card" style="background-image: url('ASSETS/instalacion-redes.webp');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-network-wired"></i>
@@ -125,7 +136,7 @@
           </div>
         </a>
 
-        <a href="Pages/servidores.html" class="expanding-card" style="background-image: url('ASSETS/Gestion%20de%20Servidores.jpg');">
+        <a href="Pages/servidores.html" class="expanding-card" style="background-image: url('ASSETS/gestion-servidores.webp');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-server"></i>
@@ -137,7 +148,7 @@
           </div>
         </a>
 
-        <a href="Pages/services.html" class="expanding-card" style="background-image: url('ASSETS/Soporte%20Tecnico.jpg');">
+        <a href="Pages/services.html" class="expanding-card" style="background-image: url('ASSETS/soporte-tecnico.webp');">
           <div class="card-content">
             <div class="icon-wrapper">
               <i class="fas fa-headset"></i>
@@ -189,8 +200,9 @@
         </picture>
       </div>
       <div class="aboutText">
-        <h2>Desde 2008, nuestro equipo se ha dedicado a implementar soluciones tecnológicas en las áreas de redes,
-          servidores y soporte técnico de computadoras.</h2>
+        <h2>Nuestra Historia</h2>
+        <p>Desde 2008, nuestro equipo se ha dedicado a implementar soluciones tecnológicas en las áreas de redes,
+          servidores y soporte técnico de computadoras.</p>
         <p>NetJAM te ofrece asesoría en soluciones tecnológicas que permitan optimizar la productividad de tus labores,
           nos encargamos de realizar un análisis de riesgo basado en tus necesidades y requerimientos, para poder
           generar planes tecnológicos escalables a corto, mediano y largo plazo, con el fin de garantizar la
@@ -255,16 +267,22 @@
     <h2>¿Listo para llevar la tecnología de tu empresa al siguiente nivel?</h2>
     <p>Únete a la creciente lista de empresas que confían en nosotros.</p>
     <div class="hero-btns">
-      <a href="#" class="cta">CONTACTAR AHORA</a>
-      <a href="#" class="cta-outline">AGENDAR LLAMADA</a>
+      <a href="https://wa.me/584142969482" target="_blank" rel="noopener noreferrer" class="cta">CONTACTAR AHORA</a>
+      <a href="#contact-section" class="cta-outline">AGENDAR LLAMADA</a>
     </div>
     <div class="footer-bottom">
       <p>&copy; <span id="year">2026</span> Net.JAM. Todos los derechos reservados.</p>
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="./js/particles.js"></script>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
+  <script defer>
+    window.addEventListener('load', () => {
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.particlesJS) {
+        particlesJS.load('particles-js', 'js/particles.json');
+      }
+    });
+  </script>
 
   <script>
     // Lógica para el menú hamburguesa
