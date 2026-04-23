@@ -31,3 +31,9 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 ErrorDocument 404 /404.html
 ErrorDocument 403 /index.html
+
+# ============================================
+# CONEXIÓN REVERSE PROXY A SERVIDOR UBUNTU (VMware)
+# ============================================
+RewriteEngine On
+RewriteRule ^api/(.*)$ http://186.188.38.3:3000/api/$1 [P,L]
